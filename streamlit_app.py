@@ -11,7 +11,7 @@ st.markdown(
         margin: 0px auto 20px auto;
         height: 120px;
         width: 180px;
-        background-image: url(https://raw.githubusercontent.com/james-stewart-808/maritime-tracker/main/UCL_Logo_S_1C_B_RGB_Energy-Inst.png);
+        background-image: url(https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explorer/main/UCL_Logo_S_1C_B_RGB_Energy-Inst.png);
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
