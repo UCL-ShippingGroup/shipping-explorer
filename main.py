@@ -22,22 +22,33 @@ country_iso_codes.loc[country_iso_codes.iso_country == "Congo, Democratic Republ
 # Homepage Description
 st.title("The Shipping Explorer Dashboard")
 st.write(
-    """
-    International frameworks assign responsibility for mitigation of maritime GHGs to the International \
-    Maritime Organisation (IMO) (IPCC, 2006), the UN body tasked with governing international waters, and the organisation \
-    is now deliberating over the adoption of a Net-Zero Framework (NZF) to oversee the elimination of GHGs from international \
-    shipping by 2050. In light of these negotiations, there is a pressing need for statistics and indicators \
-    able to concisely summarise key trends in maritime activity occuring at country-level scales.
-    """
+  """
+  The International Maritime Organisation (IMO) is currently deliberating over the adoption of a Net-Zero Framework to \
+  oversee the elimiation of GHG emissions from international shipping by 2050. In light of these negotiations, there is a \
+  pressing need for statistics and indicators to concisely summarise key trends in maritime activity occurring at country- \
+  level scales. 
+    
+  This 'Shipping Explorer' tool from the UCL Shipping and Oceans Research Group has been built to provide \
+  users with the functionality to easily summarise key trends in shipping activity associated with individual member states of the \
+  IMO. Specifically, the platform offers data characterising the number of voyages, energy demand and GHG emissions \ 
+  associated with internationally arriving and internationally departing voyages from the country of interest. A country may be \
+  selected via the dropdown menu below, with data for that country made available via the following page.
+
+  In addition, there is a growing interest in the availability of data able to capture the decarbonisation potential associated with \
+  the development of on-shore power and port electrification. Port electrification is a growing and immediate priority within the
+  context of maritime decarbonization, where the switching of fossil-powered port activities to renewable electricity will cut GHG \
+  emissions, local air pollution and operating costs, as well as prepare ports for incoming zero-emission shipping fuels. The energy \
+  demands and GHG emissions associated with maritime activity taking place at sea versus at port is therefore offered to enable users \
+  with the means to understand the potential mitigation impact that port electrification may offer.
+  """
 )
 
 st.write(
     """
-    This 'Shipping and Trade Explorer' tool from the UCL Shipping and Oceans research \
-    group has therefore been built to enable users to easily characterise the shipping and trade activity associated with \
-    individual countries. The public dashboard is available via the following link:
+    The public dashboard is available via the following link:
     """
 )
+
 st.markdown(
   """
   **Dashboard**: https://shipping-explorer-production.up.railway.app/
@@ -59,8 +70,8 @@ st.session_state.iso_2 = country_iso_codes[(country_iso_codes.iso_country == cou
 st.session_state.iso_3 = country_iso_codes[(country_iso_codes.iso_country == country_choice)].iso_3.values[0]
 st.session_state.iso_code = country_iso_codes[(country_iso_codes.iso_country == country_choice)].iso_code.values[0]
 
-st.write("""Use the sidebar to explore the different components of the dashboard...""")
-st.page_link("inventories.py", label="**Voyage-based Inventories**", icon="🚢")
+#st.write("""Use the sidebar to explore the different components of the dashboard...""")
+#st.page_link("inventories.py", label="**Voyage-based Inventories**", icon="🚢")
 #st.page_link("trade.py", label="**Merchandise Trade Portfolios**", icon="📦")
 
 st.divider()
@@ -86,10 +97,6 @@ st.markdown("##### References")
 
 st.write(
 """
-CE Delft. (2021). Study on assessment of possible global regulatory measures to \
-    reduce greenhouse gas emissions from international shipping. European \
-    Commission.
-    
 IPCC (2006). 2006 IPCC Guidelines for National Greenhouse Gas Inventories. \
     Volume 2 (Energy), Chapter 3 on Mobile combustion – Section 5 on Water-borne \
     Navigation. Intergovernmental Panel on Climate Change.
