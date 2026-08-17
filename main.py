@@ -20,7 +20,7 @@ country_iso_codes.loc[country_iso_codes.iso_country == "Congo, Democratic Republ
 
 
 # Homepage Description
-st.title("The Shipping and Trade Explorer Dashboard")
+st.title("The Shipping Explorer Dashboard")
 st.write(
     """
     International frameworks assign responsibility for mitigation of maritime GHGs to the International \
