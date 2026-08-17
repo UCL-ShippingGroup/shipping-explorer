@@ -40,7 +40,7 @@ st.write(
 )
 st.markdown(
   """
-  **Dashboard**: https://shipping-and-trade-explorer.streamlit.app/
+  **Dashboard**: https://shipping-explorer-production.up.railway.app/
   """, 
   text_alignment="center"
 )
