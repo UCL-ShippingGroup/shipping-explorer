@@ -1,0 +1,4 @@
+Domestic by Type,n_vys,n_imo,tps_mn_gtnm,tps_mn_dwtnm,aby_vys,aby_flt,aby_gtnm,aby_dwtnm,avd_vys,avd_flt,avd_gtnm,avd_dwtnm,avt_vys,avt_flt,avt_gtnm,avt_dwtnm,apt_vys,apt_flt,apt_gtnm,apt_dwtnm,ene_tj,ene_tj_voy,ene_tj_stop,co2_t,co2_t_voy,co2_t_stop,co2e_t,co2e_t_voy,co2e_t_stop
+Offshore,1,1,2.4,1.2,1984.0,1984.0,1984.0,1984.0,389.4,389.4,389.4,389.4,13.0,13.0,13.0,13.0,32.0,32.0,32.0,32.0,0.6,0.2,0.4,41.9,12.1,29.8,42.7,12.3,30.4
+Container,1,1,0.2,0.2,2001.0,2001.0,2001.0,2001.0,12.4,12.4,12.4,12.4,5.0,5.0,5.0,5.0,8.0,8.0,8.0,8.0,0.2,0.1,0.1,11.4,4.7,6.7,11.6,4.8,6.8
+Bulk carrier,1,1,0.3,0.6,2008.0,2008.0,2008.0,2008.0,19.6,19.6,19.6,19.6,23.0,23.0,23.0,23.0,486.0,486.0,486.0,486.0,1.2,0.1,1.1,86.7,4.3,82.3,88.3,4.4,83.9

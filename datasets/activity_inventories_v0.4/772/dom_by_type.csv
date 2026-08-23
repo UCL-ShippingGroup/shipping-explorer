@@ -1,0 +1,4 @@
+Domestic by Type,n_vys,n_imo,tps_mn_gtnm,tps_mn_dwtnm,aby_vys,aby_flt,aby_gtnm,aby_dwtnm,avd_vys,avd_flt,avd_gtnm,avd_dwtnm,avt_vys,avt_flt,avt_gtnm,avt_dwtnm,apt_vys,apt_flt,apt_gtnm,apt_dwtnm,ene_tj,ene_tj_voy,ene_tj_stop,co2_t,co2_t_voy,co2_t_stop,co2e_t,co2e_t_voy,co2e_t_stop
+General cargo,73,2,3.7,1.8,2014.6,2001.0,2013.0,2008.7,98.3,130.3,98.9,105.7,17.0,31.5,22.1,26.1,1.0,2.5,2.9,3.1,2.2,2.0,0.1,162.4,153.9,8.5,165.6,156.9,8.7
+Ro-Ro,54,2,1.7,1.5,2017.6,2015.5,2017.6,2017.6,63.5,69.5,64.6,64.5,9.5,10.0,14.0,14.0,5.0,6.2,6.4,6.4,6.9,4.4,2.5,518.6,329.8,188.8,528.6,336.1,192.4
+Service - tug,4,1,0.1,0.1,2001.0,2001.0,2001.0,2001.0,88.4,88.4,87.7,87.7,42.0,42.0,46.5,46.5,7.0,7.0,7.8,7.8,0.2,0.2,0.0,15.5,14.0,1.5,15.8,14.3,1.5
