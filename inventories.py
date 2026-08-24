@@ -298,11 +298,6 @@ energy_plot = int_inv_by_port_to_plot[
     value_name="Value"
 )
 
-ghg_plot["Component"] = ghg_plot["Component"].replace({
-    "GHG Emissions (t CO2e) in Voyage": "In Voyage",
-    "GHG Emissions (t CO2e) in Port": "In Port"
-})
-
 ghg_plot["Percentage"] = (
     ghg_plot["Value"] /
     ghg_plot.groupby(["Port", "inv_type"])["Value"].transform("sum")
@@ -312,11 +307,9 @@ ghg_plot["Percentage"] = (
 ghg_plot["Percentage_display"] = (
     ghg_plot["Percentage"].map(lambda x: f"{x:.1f}%")
 )
-
-# Simplify Energy component names
-energy_plot["Component"] = energy_plot["Component"].replace({
-    "Energy Demand in Voyage (TJ)": "In Voyage",
-    "Energy Demand in Port (TJ)": "In Port"
+ghg_plot["Component"] = ghg_plot["Component"].replace({
+    "GHG Emissions (t CO2e) in Voyage": "In Voyage",
+    "GHG Emissions (t CO2e) in Port": "In Port"
 })
 
 energy_plot["Percentage"] = (
@@ -327,6 +320,13 @@ energy_plot["Percentage"] = (
 energy_plot["Percentage_display"] = (
     energy_plot["Percentage"].map(lambda x: f"{x:.1f}%")
 )
+# Simplify Energy component names
+energy_plot["Component"] = energy_plot["Component"].replace({
+    "Energy Demand in Voyage (TJ)": "In Voyage",
+    "Energy Demand in Port (TJ)": "In Port"
+})
+
+
 # Create colour category for GHG
 ghg_plot["Colour"] = (
     ghg_plot["inv_type"] + " - " + ghg_plot["Component"]
