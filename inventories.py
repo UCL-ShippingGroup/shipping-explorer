@@ -362,7 +362,7 @@ if selection == "GHG Emissions (t CO2 e)":
             legend=alt.Legend(
                 orient="bottom",
                 direction="horizontal",
-                columns=4,
+                columns=2,
                 title=None
             )
         ),
@@ -376,9 +376,7 @@ if selection == "GHG Emissions (t CO2 e)":
             "Component",
             alt.Tooltip("Value:Q", format=",.2f")
         ]
-     )
-        .properties(
-            padding={"left": 10, "right": 30}
+    
     ),
     use_container_width=True
 )
@@ -421,7 +419,7 @@ else:
             legend=alt.Legend(
                 orient="bottom",
                 direction="horizontal",
-                columns=4,
+                columns=2,
                 title=None
             )
         ),
@@ -435,9 +433,6 @@ else:
             "Component",
             alt.Tooltip("Value:Q", format=",.2f")
         ]
-    )
-    .properties(
-        padding={"left": 10, "right": 30}
     ),
     use_container_width=True
 )
