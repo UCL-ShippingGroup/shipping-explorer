@@ -367,7 +367,7 @@ if selection == "GHG Emissions (t CO2 e)":
         ),
         order=alt.Order(
             "Component:N",
-            sort=descending
+            sort="descending"
         ),
         tooltip=[
             "Port",
@@ -421,7 +421,7 @@ else:
         ),
         order=alt.Order(
             "Component:N",
-            sort=descending
+            sort="descending"
         ),
         tooltip=[
             "Port",
