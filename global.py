@@ -107,6 +107,7 @@ fig = px.choropleth(
     locations="alpha-3",
     locationmode="ISO-3",
     color=selected_column,
+    hover_name='alpha-3'
     color_continuous_scale="Reds",
     labels={selected_column: unit},
     title=f"{chart_choice2} — {chart_choice3} — {chart_choice}"
