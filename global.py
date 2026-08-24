@@ -130,3 +130,9 @@ st.plotly_chart(
 )
 
 #"Reds"
+st.subheader(
+    "A Closer Look at {0} in the Global Context".format(
+        st.session_state.iso_country),
+    divider = 'grey'
+)
+
