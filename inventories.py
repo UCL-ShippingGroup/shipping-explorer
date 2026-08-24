@@ -87,7 +87,7 @@ indicator = st.segmented_control(
         "Number of Calls", #"Average Build Year", 
          #"Average Voyage Distance (nm)", 
          #"Average Voyage Time (hours)", "Average Time in Port (hours)", 
-         "Energy Demand (TJ)", "GHG Emissions (t CO2e)", 
+         "GHG Emissions (t CO2e)","Energy Demand (TJ)", 
          #"NZF Costs in 2030 (US$)", "NZF Costs in 2040 (US$)", "NZF Costs in 2050 (US$)",
          #"NZF Costs per Voyage in 2030 (US$)", "NZF Costs per Voyage in 2040 (US$)", "NZF Costs per Voyage in 2050 (US$)"
     ]
@@ -102,7 +102,7 @@ indicator_r = {
     "ene_tj":"Energy Demand (TJ)", "co2e_t":"GHG Emissions (t CO2e)",
     "s24_30":"NZF Costs in 2030 (US$)", "s24_40":"NZF Costs in 2040 (US$)", "s24_50":"NZF Costs in 2050 (US$)",
     "s24_30_voy":"NZF Costs per Voyage in 2030 (US$)", "s24_40_voy":"NZF Costs per Voyage in 2040 (US$)", "s24_50_voy":"NZF Costs per Voyage in 2050 (US$)",
-    "ene_tj_voy":"Energy Demand in Voyage (TJ)", "ene_tj_stop": "Energy Demand in voyage (TJ)", "co2e_t_voy":"GHG Emissions (t CO2e) in Voyage", "co2e_t_stop":"GHG Emissions (t CO2e) in Port"
+    "ene_tj_voy":"Energy Demand in Voyage (TJ)", "ene_tj_stop": "Energy Demand in Port (TJ)", "co2e_t_voy":"GHG Emissions (t CO2e) in Voyage", "co2e_t_stop":"GHG Emissions (t CO2e) in Port"
 }
 
 if indicator == None:
@@ -271,7 +271,96 @@ else:
 #)
 st.divider()
 
-st.markdown("Detailed Breakdown of GHG Emissions (t CO2 e) and Energy Demand (TJ)")
+#Dataset for Stacked Bar Chart
+ghg_plot = int_inv_by_port_to_plot[
+    [
+        "Port",
+        "inv_type",
+        "GHG Emissions (t CO2e) in Voyage",
+        "GHG Emissions (t CO2e) in Port"
+    ]
+].melt(
+    id_vars=["Port", "inv_type"],
+    var_name="Component",
+    value_name="Value"
+)
+
+energy_plot = int_inv_by_port_to_plot[
+    [
+        "Port",
+        "inv_type",
+        "Energy Demand in Voyage (TJ)",
+        "Energy Demand in Port (TJ)"
+    ]
+].melt(
+    id_vars=["Port", "inv_type"],
+    var_name="Component",
+    value_name="Value"
+)
+
+st.markdown("#### Detailed Breakdown of GHG Emissions (t CO2 e) and Energy Demand (TJ)")
+options = ['GHG Emissions (t CO2 e)', 'Energy Demand (TJ)']
+selection = st.segmented_control(
+           "Which indicator would you like to explore", 
+           options,
+           default = 'GHG Emissions (t CO2 e)')
+
+if selection == "GHG Emissions (t CO2 e)":
+    st.altair_chart(
+    alt.Chart(ghg_plot)
+    .mark_bar()
+    .encode(
+        x=alt.X(
+            "Port:N",
+            title="Port"
+        ),
+        xOffset=alt.XOffset(
+            "inv_type:N",
+            title=None
+        ),
+        y=alt.Y(
+            "Value:Q",
+            title="GHG Emissions (t CO2e)"
+        ),
+        color=alt.Color(
+            "Component:N",
+            title=None
+        ),
+        tooltip=[
+            "Port",
+            "inv_type",
+            "Component",
+            alt.Tooltip("Value:Q", format=",.2f")
+        ]
+    ),
+    use_container_width=True
+)
+
+else:
+    st.altair_chart(
+    alt.Chart(energy_plot)
+    .mark_bar()
+    .encode(
+        x=alt.X("Port:N", title="Port"),
+        xOffset=alt.XOffset("inv_type:N", title=None),
+        y=alt.Y(
+            "Value:Q",
+            title="Energy Demand (TJ)"
+        ),
+        color=alt.Color(
+            "Component:N",
+            title=None
+        ),
+        tooltip=[
+            "Port",
+            "inv_type",
+            "Component",
+            alt.Tooltip("Value:Q", format=",.2f")
+        ]
+    ),
+    use_container_width=True
+)
+    
 
 st.markdown("##### References")
 
