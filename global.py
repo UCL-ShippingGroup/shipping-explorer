@@ -140,7 +140,7 @@ arr = df[
 ].copy()
 
 arr = arr[
-    ["alpha-3", "co2e_t", "co2e_t_voy", "co2e_t_stop", "ene_tj", "ene_tj_voy", "ene_tj_stop" "n_vys", "apt_flt"]
+    ["alpha-3", "co2e_t", "co2e_t_voy", "co2e_t_stop", "ene_tj", "ene_tj_voy", "ene_tj_stop", "n_vys", "apt_flt"]
 ].rename(columns={
     "co2e_t_voy": "co2e_t__voy_arr",
     "co2e_t_stop": "co2e_t_stop_arr",
@@ -162,7 +162,7 @@ dep = df[
 ].copy()
 
 dep = dep[
-    ["alpha-3", "co2e_t", "co2e_t_voy", "co2e_t_stop", "ene_tj", "ene_tj_voy", "ene_tj_stop" "n_vys", "apt_flt"]
+    ["alpha-3", "co2e_t", "co2e_t_voy", "co2e_t_stop", "ene_tj", "ene_tj_voy", "ene_tj_stop", "n_vys", "apt_flt"]
 ].rename(columns={
    "co2e_t_voy": "co2e_t__voy_dep",
     "co2e_t_stop": "co2e_t_stop_dep",
