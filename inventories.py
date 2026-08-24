@@ -303,11 +303,23 @@ ghg_plot["Component"] = ghg_plot["Component"].replace({
     "GHG Emissions (t CO2e) in Port": "In Port"
 })
 
+ghg_plot["Percentage"] = (
+    ghg_plot["Value"] /
+    ghg_plot.groupby(["Port", "inv_type"])["Value"].transform("sum")
+    * 100
+)
+
 # Simplify Energy component names
 energy_plot["Component"] = energy_plot["Component"].replace({
     "Energy Demand in Voyage (TJ)": "In Voyage",
     "Energy Demand in Port (TJ)": "In Port"
 })
+
+energy_plot["Percentage"] = (
+    energy_plot["Value"] /
+    energy_plot.groupby(["Port", "inv_type"])["Value"].transform("sum")
+    * 100
+)
 
 # Create colour category for GHG
 ghg_plot["Colour"] = (
@@ -371,11 +383,21 @@ if selection == "GHG Emissions (t CO2 e)":
             sort="descending"
         ),
         tooltip=[
-            "Port",
-            "inv_type",
-            "Component",
-            alt.Tooltip("Value:Q", format=",.2f")
-        ]
+        "Port",
+        "inv_type",
+        "Component",
+        alt.Tooltip(
+            "Value:Q",
+            format=",.2f",
+            title="Value"
+        ),
+        alt.Tooltip(
+            "Percentage:Q",
+            format=".1f",
+            title="Percentage",
+            suffix="%"
+        )
+    ]
     
     ),
     use_container_width=True
@@ -428,11 +450,21 @@ else:
             sort="descending"
         ),
         tooltip=[
-            "Port",
-            "inv_type",
-            "Component",
-            alt.Tooltip("Value:Q", format=",.2f")
-        ]
+        "Port",
+        "inv_type",
+        "Component",
+        alt.Tooltip(
+            "Value:Q",
+            format=",.2f",
+            title="Value"
+        ),
+        alt.Tooltip(
+            "Percentage:Q",
+            format=".1f",
+            title="Percentage",
+            suffix="%"
+        )
+    ]
     ),
     use_container_width=True
 )
