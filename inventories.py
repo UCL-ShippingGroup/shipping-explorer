@@ -92,7 +92,9 @@ indicator = st.segmented_control(
          #"NZF Costs per Voyage in 2030 (US$)", "NZF Costs per Voyage in 2040 (US$)", "NZF Costs per Voyage in 2050 (US$)"
     ]
 )
-indicator_c = ["n_vys", "aby_flt", "avd_flt", "avt_flt", "apt_flt", "ene_tj", "co2e_t", "s24_30", "s24_40", "s24_50", "s24_30_voy", "s24_40_voy", "s24_50_voy", "ene_tj_voy", "ene_tj_stop", "co2e_t_voy", "co2e_t_stop"]
+indicator_c = ["n_vys", "aby_flt", "avd_flt", "avt_flt", "apt_flt", "ene_tj", "co2e_t", 
+               #"s24_30", "s24_40", "s24_50", "s24_30_voy", "s24_40_voy", "s24_50_voy", 
+               "ene_tj_voy", "ene_tj_stop", "co2e_t_voy", "co2e_t_stop"]
 indicator_r = {
     "n_vys":"Number of Calls", 
     "aby_flt":"Average Build Year", "avd_flt":"Average Voyage Distance (nm)", 
