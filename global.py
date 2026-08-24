@@ -23,6 +23,8 @@ chart_choice3 = st.segmented_control(
     options=["Total", "In Voyage", "In Port"],
     default="Total"
 
+)
+
   # Fourth segmented control
 chart_choice4 = st.segmented_control(
     label="Select statistical view",
