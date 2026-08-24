@@ -3,6 +3,9 @@ import numpy as np
 import plotly.express as px
 import streamlit as st
 
+st.set_page_config(layout='wide')
+st.title('Global Overview')
+
 df = pd.read_csv("https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explorer/main/datasets/inventories_total.csv")
 
 #arr = inventories[inventories['Inventory']== 'Int. Arr. Inventory']
