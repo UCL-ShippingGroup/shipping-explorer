@@ -376,11 +376,13 @@ if selection == "GHG Emissions (t CO2 e)":
             "Component",
             alt.Tooltip("Value:Q", format=",.2f")
         ]
-        chart.properties(
-        padding={"left": 10, "right": 30}
+     )
+        .properties(
+            padding={"left": 10, "right": 30}
     ),
     use_container_width=True
 )
+
 
 else:
     st.altair_chart(
@@ -433,12 +435,12 @@ else:
             "Component",
             alt.Tooltip("Value:Q", format=",.2f")
         ]
-        chart.properties(
+    )
+    .properties(
         padding={"left": 10, "right": 30}
     ),
     use_container_width=True
 )
-    
 
 st.markdown("##### References")
 
