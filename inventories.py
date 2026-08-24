@@ -309,6 +309,10 @@ ghg_plot["Percentage"] = (
     * 100
 )
 
+ghg_plot["Percentage_display"] = (
+    ghg_plot["Percentage"].map(lambda x: f"{x:.1f}%")
+)
+
 # Simplify Energy component names
 energy_plot["Component"] = energy_plot["Component"].replace({
     "Energy Demand in Voyage (TJ)": "In Voyage",
@@ -320,7 +324,9 @@ energy_plot["Percentage"] = (
     energy_plot.groupby(["Port", "inv_type"])["Value"].transform("sum")
     * 100
 )
-
+energy_plot["Percentage_display"] = (
+    energy_plot["Percentage"].map(lambda x: f"{x:.1f}%")
+)
 # Create colour category for GHG
 ghg_plot["Colour"] = (
     ghg_plot["inv_type"] + " - " + ghg_plot["Component"]
@@ -392,10 +398,9 @@ if selection == "GHG Emissions (t CO2 e)":
             title="Value"
         ),
         alt.Tooltip(
-            "Percentage:Q",
-            format=".1f",
-            title="Percentage",
-            suffix="%"
+            "Percentage_display:N",
+            format=",.2f"
+            title="Percentage"
         )
     ]
     
@@ -459,10 +464,9 @@ else:
             title="Value"
         ),
         alt.Tooltip(
-            "Percentage:Q",
-            format=".1f",
-            title="Percentage",
-            suffix="%"
+            "Percentage_display:N",
+            format=",.2f",
+            title="Percentage"
         )
     ]
     ),
