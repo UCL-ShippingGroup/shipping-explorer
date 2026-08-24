@@ -362,6 +362,7 @@ if selection == "GHG Emissions (t CO2 e)":
             legend=alt.Legend(
                 orient="bottom",
                 direction="horizontal",
+                columns=4,
                 title=None
             )
         ),
@@ -416,6 +417,7 @@ else:
             legend=alt.Legend(
                 orient="bottom",
                 direction="horizontal",
+                columns=4,
                 title=None
             )
         ),
