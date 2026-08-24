@@ -111,7 +111,7 @@ fig = px.choropleth(
     locationmode="ISO-3",
     color=selected_column,
     hover_name='alpha-3',
-    color_continuous_scale="Reds",
+    color_continuous_scale="RdYlGn_r",
     labels={selected_column: unit},
     title=f"{chart_choice2} — {chart_choice3} — {chart_choice}"
 )
@@ -121,12 +121,12 @@ fig.update_geos(
     coastlinecolor="Black",
     #showland=True,
     showcountries=True,
-    #countrycolor="gray",
+    countrycolor="gray",
     fitbounds="locations"
 )
 st.plotly_chart(
     fig,
     width='stretch'
 )
-  
-  
+
+#"Reds"
