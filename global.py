@@ -112,6 +112,9 @@ fig = px.choropleth(
     title=f"{chart_choice2} — {chart_choice3} — {chart_choice}"
 )
 
-
+st.plotly_chart(
+    fig,
+    use_container_width=True
+)
   
   
