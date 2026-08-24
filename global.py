@@ -121,7 +121,7 @@ fig.update_geos(
     coastlinecolor="Black",
     showland=True,
     showcountries=True,
-    countrycolor="gray",
+    #countrycolor="gray",
     fitbounds="locations"
 )
 st.plotly_chart(
