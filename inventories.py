@@ -336,7 +336,7 @@ ghg_plot["Colour"] = (
 energy_plot["Colour"] = (
     energy_plot["inv_type"] + " - " + energy_plot["Component"]
 )
-st.markdown("#### Detailed Breakdown of GHG Emissions (t CO2 e) and Energy Demand (TJ)")
+st.markdown("#### Detailed Breakdown of GHG Emissions (t CO2 e) and Energy Demand (TJ) by Port")
 options = ['GHG Emissions (t CO2 e)', 'Energy Demand (TJ)']
 selection = st.segmented_control(
            "Which indicator would you like to explore", 
