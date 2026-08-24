@@ -42,14 +42,14 @@ chart_choice4 = st.segmented_control(
 
 if chart_choice == "International Arrivals":
 
-    plot_df = inventories_total[
-        inventories_total["Inventory"] == "Int. Arr. Inventory"
+    plot_df = df[
+        df["Inventory"] == "Int. Arr. Inventory"
     ].copy()
 
 else:
 
-    plot_df = inventories_total[
-        inventories_total["Inventory"] == "Int. Dep. Inventory"
+    plot_df = df[
+        df["Inventory"] == "Int. Dep. Inventory"
     ].copy()
 
 
