@@ -18,7 +18,7 @@ chart_choice = st.segmented_control(
 chart_choice2 = st.segmented_control(
     label="Which indicator would you like to view?",
     options=["GHG Emissions (t CO2e)", "Energy Demand (TJ)"],
-    default="GHG Emisions (t CO2e)"
+    default="GHG Emissions (t CO2e)"
 )
 
 # Third segmented control
