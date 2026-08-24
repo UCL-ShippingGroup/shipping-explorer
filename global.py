@@ -135,4 +135,97 @@ st.subheader(
         st.session_state.iso_country),
     divider = 'grey'
 )
+arr = df[
+    df["Inventory"] == "Int. Arr. Inventory"
+].copy()
 
+arr = arr[
+    ["alpha-3", "co2e_t", "co2e_t_voy", "co2e_t_stop", "ene_tj", "ene_tj_voy", "ene_tj_stop" "n_vys", "apt_flt"]
+].rename(columns={
+    "co2e_t_voy": "co2e_t__voy_arr",
+    "co2e_t_stop": "co2e_t_stop_arr",
+    "co2e_t": "co2e_t_arr",
+    "ene_tj": "ene_tj_arr",
+    "ene_tj_voy": "ene_tj_stop_arr",
+    "ene_tj_stop": "ene_tj_stop_arr",
+    "n_vys": "n_vys_arr",
+    "apt_flt": "apt_flt_arr"
+})
+
+
+# -----------------------------
+# DEPARTURES
+# -----------------------------
+
+dep = df[
+    df["Inventory"] == "Int. Dep. Inventory"
+].copy()
+
+dep = dep[
+    ["alpha-3", "co2e_t", "co2e_t_voy", "co2e_t_stop", "ene_tj", "ene_tj_voy", "ene_tj_stop" "n_vys", "apt_flt"]
+].rename(columns={
+   "co2e_t_voy": "co2e_t__voy_dep",
+    "co2e_t_stop": "co2e_t_stop_dep",
+    "co2e_t": "co2e_t_dep",
+    "ene_tj": "ene_tj_dep",
+    "ene_tj_voy": "ene_tj_stop_dep",
+    "ene_tj_stop": "ene_tj_stop_dep",
+    "n_vys": "n_vys_dep",
+    "apt_flt": "apt_flt_dep"
+})
+
+
+# -----------------------------
+# MERGE
+# -----------------------------
+
+bubble_df = arr.merge(
+    dep,
+    on="alpha-3",
+    how="inner"
+)
+
+
+# -----------------------------
+# BUBBLE VARIABLES
+# -----------------------------
+
+# Total number of voyages
+bubble_df["total_voyages"] = (
+    bubble_df["n_vys_arr"] +
+    bubble_df["n_vys_dep"]
+)
+
+# Average time in port
+bubble_df["avg_time_in_port"] = (
+    bubble_df["apt_flt_arr"] +
+    bubble_df["apt_flt_dep"]
+) / 2
+
+fig = px.scatter(
+    bubble_df,
+    x="co2e_t_arr",
+    y="co2e_t_dep",
+    size="total_voyages",
+    color="avg_time_in_port",
+    hover_name="alpha-3",
+    size_max=60,
+    color_continuous_scale="Viridis",
+    labels={
+        "arr_ghg": "International Arrivals GHG Emissions (t CO2e)",
+        "dep_ghg": "International Departures GHG Emissions (t CO2e)",
+        "total_voyages": "Total Voyages",
+        "avg_time_in_port": "Average Time in Port"
+    }
+)
+
+fig.update_layout(
+    title="International Arrivals vs Departures GHG Emissions",
+    xaxis_title="International Arrivals GHG Emissions (t CO2e)",
+    yaxis_title="International Departures GHG Emissions (t CO2e)"
+)
+
+st.plotly_chart(
+    fig,
+    use_container_width=True
+)
