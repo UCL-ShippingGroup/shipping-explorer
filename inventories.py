@@ -399,7 +399,7 @@ if selection == "GHG Emissions (t CO2 e)":
         ),
         alt.Tooltip(
             "Percentage_display:N",
-            format=",.2f"
+            format=",.2f",
             title="Percentage"
         )
     ]
