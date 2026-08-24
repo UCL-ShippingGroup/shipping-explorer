@@ -305,7 +305,7 @@ ghg_plot["Percentage"] = (
 )
 
 ghg_plot["Percentage_display"] = (
-    ghg_plot["Percentage"].map(lambda x: f"{x:.1f}%")
+    ghg_plot["Percentage"].map(lambda x: f"{x:.2f}%")
 )
 ghg_plot["Component"] = ghg_plot["Component"].replace({
     "GHG Emissions (t CO2e) in Voyage": "In Voyage",
@@ -318,7 +318,7 @@ energy_plot["Percentage"] = (
     * 100
 )
 energy_plot["Percentage_display"] = (
-    energy_plot["Percentage"].map(lambda x: f"{x:.1f}%")
+    energy_plot["Percentage"].map(lambda x: f"{x:.2f}%")
 )
 # Simplify Energy component names
 energy_plot["Component"] = energy_plot["Component"].replace({
@@ -399,7 +399,6 @@ if selection == "GHG Emissions (t CO2 e)":
         ),
         alt.Tooltip(
             "Percentage_display:N",
-            format=",.2f",
             title="Percentage"
         )
     ]
@@ -465,7 +464,6 @@ else:
         ),
         alt.Tooltip(
             "Percentage_display:N",
-            format=",.2f",
             title="Percentage"
         )
     ]
