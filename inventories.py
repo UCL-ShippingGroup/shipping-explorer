@@ -298,6 +298,26 @@ energy_plot = int_inv_by_port_to_plot[
     value_name="Value"
 )
 
+ghg_plot["Component"] = ghg_plot["Component"].replace({
+    "GHG Emissions (t CO2e) in Voyage": "In Voyage",
+    "GHG Emissions (t CO2e) in Port": "In Port"
+})
+
+# Simplify Energy component names
+energy_plot["Component"] = energy_plot["Component"].replace({
+    "Energy Demand in Voyage (TJ)": "In Voyage",
+    "Energy Demand in Port (TJ)": "In Port"
+})
+
+# Create colour category for GHG
+ghg_plot["Colour"] = (
+    ghg_plot["inv_type"] + " - " + ghg_plot["Component"]
+)
+
+# Create colour category for Energy
+energy_plot["Colour"] = (
+    energy_plot["inv_type"] + " - " + energy_plot["Component"]
+)
 st.markdown("#### Detailed Breakdown of GHG Emissions (t CO2 e) and Energy Demand (TJ)")
 options = ['GHG Emissions (t CO2 e)', 'Energy Demand (TJ)']
 selection = st.segmented_control(
