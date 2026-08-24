@@ -70,12 +70,12 @@ column_map = {
     # GHG - Percentage
     ("GHG Emissions (t CO2e)", "Total", "Percentage"): "co2e_t_pc",
     ("GHG Emissions (t CO2e)", "In Voyage", "Percentage"): "co2e_t_voy_pc",
-    ("GHG Emissions (t CO2e)", "In Port", "Percentage"): "co2_t_stop_pc",
+    ("GHG Emissions (t CO2e)", "In Port", "Percentage"): "co2e_t_stop_pc",
 
     # Energy - Absolute
-    ("Energy Demand (TJ)", "Total", "Absolute"): "ene_te",
-    ("Energy Demand (TJ)", "In Voyage", "Absolute"): "ene_te_voy",
-    ("Energy Demand (TJ)", "In Port", "Absolute"): "ene_te_stop",
+    ("Energy Demand (TJ)", "Total", "Absolute"): "ene_tj",
+    ("Energy Demand (TJ)", "In Voyage", "Absolute"): "ene_tj_voy",
+    ("Energy Demand (TJ)", "In Port", "Absolute"): "ene_tj_stop",
 
     # Energy - Percentage
     ("Energy Demand (TJ)", "Total", "Percentage"): "ene_tj_pc",
