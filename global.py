@@ -115,7 +115,15 @@ fig = px.choropleth(
     labels={selected_column: unit},
     title=f"{chart_choice2} — {chart_choice3} — {chart_choice}"
 )
-
+fig.update_layout(paper_bgcolor="white",height= 600, width=400,font_size=18)
+fig.update_geos(
+    showcoastlines=True,
+    coastlinecolor="Black",
+    showland=True,
+    showcountries=True,
+    countrycolor="gray",
+    fitbounds="locations"
+)
 st.plotly_chart(
     fig,
     width='stretch'
