@@ -323,8 +323,31 @@ if selection == "GHG Emissions (t CO2 e)":
             title="GHG Emissions (t CO2e)"
         ),
         color=alt.Color(
+            "Colour:N",
+            title=None,
+            scale=alt.Scale(
+                domain=[
+                    "Int. Arrivals - In Port",
+                    "Int. Arrivals - In Voyage",
+                    "Int. Departures - In Port",
+                    "Int. Departures - In Voyage"
+                ],
+                range=[
+                    "#1565C0",  # dark blue
+                    "#90CAF9",  # light blue
+                    "#C62828",  # dark red
+                    "#EF9A9A"   # light red
+                ]
+            ),
+            legend=alt.Legend(
+                orient="bottom",
+                direction="horizontal",
+                title=None
+            )
+        ),
+        order=alt.Order(
             "Component:N",
-            title=None
+            sort="ascending"
         ),
         tooltip=[
             "Port",
@@ -341,15 +364,44 @@ else:
     alt.Chart(energy_plot)
     .mark_bar()
     .encode(
-        x=alt.X("Port:N", title="Port"),
-        xOffset=alt.XOffset("inv_type:N", title=None),
+        x=alt.X(
+            "Port:N",
+            title="Port"
+        ),
+        xOffset=alt.XOffset(
+            "inv_type:N",
+            title=None
+        ),
         y=alt.Y(
             "Value:Q",
             title="Energy Demand (TJ)"
         ),
         color=alt.Color(
+            "Colour:N",
+            title=None,
+            scale=alt.Scale(
+                domain=[
+                    "Int. Arrivals - In Port",
+                    "Int. Arrivals - In Voyage",
+                    "Int. Departures - In Port",
+                    "Int. Departures - In Voyage"
+                ],
+                range=[
+                    "#1565C0",  # dark blue - arrivals, port
+                    "#90CAF9",  # light blue - arrivals, voyage
+                    "#C62828",  # dark red - departures, port
+                    "#EF9A9A"   # light red - departures, voyage
+                ]
+            ),
+            legend=alt.Legend(
+                orient="bottom",
+                direction="horizontal",
+                title=None
+            )
+        ),
+        order=alt.Order(
             "Component:N",
-            title=None
+            sort="ascending"
         ),
         tooltip=[
             "Port",
