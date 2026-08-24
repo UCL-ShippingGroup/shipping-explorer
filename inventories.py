@@ -269,7 +269,7 @@ else:
 #)
 st.divider()
 
-st.markdown("Detailed Breakdown of GHG Emissions (t CO2 e) and Energy Demand (TJ)"
+st.markdown("Detailed Breakdown of GHG Emissions (t CO2 e) and Energy Demand (TJ)")
 
 st.markdown("##### References")
 
