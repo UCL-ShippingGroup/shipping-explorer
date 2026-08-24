@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st
 import altair as alt
 import time
-input_dir = "https://raw.githubusercontent.com/james-stewart-808/inventory-tracker/main/datasets/"
+input_dir = "https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explorer/main/datasets/"
 
 def download_as_csv(file, label, filename):
     return st.download_button(
@@ -115,7 +115,7 @@ st.markdown("##### {0} by Vessel Type".format(indicator))
 
 # Read-in International Arrivals Inventory by Vessel Type Associated with the Country
 int_arr_by_type = pd.read_csv(\
-    input_dir + "inventories_v0.2/{0}/int_arr_by_type.csv".format(
+    input_dir + "activity_inventories_v0.4/{0}/int_arr_by_type.csv".format(
         st.session_state.iso_code
     ), usecols = ["Int. Arr. by Type"] + indicator_c
 ).rename(columns={"Int. Arr. by Type": "Vessel Type"} | indicator_r)
@@ -124,7 +124,7 @@ int_arr_by_type["inv_type"] = "Int. Arrivals"
 
 # Read-in International Departures Inventory by Vessel Type Associated with the Country
 int_dep_by_type = pd.read_csv(
-    input_dir + "inventories_v0.2/{0}/int_dep_by_type.csv".format(
+    input_dir + "activity_inventories_v0.4/{0}/int_dep_by_type.csv".format(
         st.session_state.iso_code
     ), usecols = ["Int. Dep. by Type"] + indicator_c
 ).rename(columns={"Int. Dep. by Type": "Vessel Type"} | indicator_r)
@@ -168,7 +168,7 @@ st.markdown("##### {0} by Partner Economy".format(indicator))
 
 # Read-in International Arrivals Inventory by Vessel Type Associated with the Country
 int_arr_by_partner = pd.read_csv(\
-    input_dir + "inventories_v0.2/{0}/int_arr_by_partner.csv".format(
+    input_dir + "activity_inventories_v0.4/{0}/int_arr_by_partner.csv".format(
         st.session_state.iso_code
     ), usecols = ["Int. Arr. by Partner"] + indicator_c
 ).rename(columns={"Int. Arr. by Partner": "Partner Economy"} | indicator_r)
@@ -177,7 +177,7 @@ int_arr_by_partner["inv_type"] = "Int. Arrivals"
 
 # Read-in International Departures Inventory by Vessel Type Associated with the Country
 int_dep_by_partner = pd.read_csv(
-    input_dir + "inventories_v0.2/{0}/int_dep_by_partner.csv".format(
+    input_dir + "activity_inventories_v0.4/{0}/int_dep_by_partner.csv".format(
         st.session_state.iso_code
     ), usecols = ["Int. Dep. by Partner"] + indicator_c
 ).rename(columns={"Int. Dep. by Partner": "Partner Economy"} | indicator_r)
@@ -223,7 +223,7 @@ st.markdown("##### {0} by Port".format(indicator))
 
 # Read-in International Arrivals Inventory by Vessel Type Associated with the Country
 int_arr_by_port = pd.read_csv(
-    input_dir + "inventories_v0.2/{0}/int_arr_by_port.csv".format(
+    input_dir + "activity_inventories_v0.4/{0}/int_arr_by_port.csv".format(
         st.session_state.iso_code
     ), usecols = ["Int. Arr. by Port"] + indicator_c
 ).rename(columns={"Int. Arr. by Port": "Port"} | indicator_r)
@@ -232,7 +232,7 @@ int_arr_by_port["inv_type"] = "Int. Arrivals"
 
 # Read-in International Departures Inventory by Vessel Type Associated with the Country
 int_dep_by_port = pd.read_csv(
-    input_dir + "inventories_v0.2/{0}/int_dep_by_port.csv".format(
+    input_dir + "activity_inventories_v0.4/{0}/int_dep_by_port.csv".format(
         st.session_state.iso_code
     ), usecols = ["Int. Dep. by Port"] + indicator_c
 ).rename(columns={"Int. Dep. by Port": "Port"} | indicator_r)
