@@ -134,7 +134,170 @@ st.subheader(
     "A Closer Look at {0} in the Global Context".format(
         st.session_state.iso_country),
     divider = 'grey'
+
+
+input_dir = "https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explorer/main/datasets/"
+
+df_1 = pd.read_csv(
+    input_dir + "activity_inventories_v0.4/{0}/inventories.csv".format(
+        st.session_state.iso_code
 )
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.subheader("International arrivals")
+    
+    # arrivals data
+    # create pie chart
+
+with col2:
+    st.subheader("International departures")
+    
+    # departures data
+    # create pie chart
+
+metric = st.segmented_control(
+    "Metric",
+    options=["GHG emissions (t CO2e)", "Energy Demand (TJ)"],
+    default="GHG emissions (t CO2e)",
+    key="metric_selection"
+)
+
+
+# ---------------------------------------------------------
+# 3. Select the appropriate columns
+# ---------------------------------------------------------
+
+if metric == "GHG emissions":
+    voy_col = "co2e_t_voy"
+    stop_col = "co2e_t_stop"
+    total_col = "co2e_t"
+    value_title = "CO₂e (tonnes)"
+
+else:
+    voy_col = "ene_tj_voy"
+    stop_col = "ene_tj_stop"
+    total_col = "ene_tj"
+    value_title = "Energy demand (TJ)"
+
+
+# ---------------------------------------------------------
+# 4. Function to create the pie chart
+# ---------------------------------------------------------
+
+def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
+
+    # Get the values
+    voyage = df[voy_col]
+    stop = df[stop_col]
+    total = df[total_col]
+
+    # Calculate percentages using the existing total
+    voyage_pct = voyage / total * 100
+    stop_pct = stop / total * 100
+
+    # Data for chart
+    pie_df = pd.DataFrame({
+        "State": ["In voyage", "In Port"],
+        "Value": [voyage, stop],
+        "Percentage": [voyage_pct, stop_pct]
+    })
+
+    # Create pie chart
+    chart = (
+        alt.Chart(pie_df)
+        .mark_arc()
+        .encode(
+            theta=alt.Theta(
+                "Value:Q",
+                stack=True
+            ),
+            color=alt.Color(
+                "State:N",
+                legend=alt.Legend(title=None)
+            ),
+            tooltip=[
+                alt.Tooltip(
+                    "State:N",
+                    title="State"
+                ),
+                alt.Tooltip(
+                    "Value:Q",
+                    title=value_title,
+                    format=",.2f"
+                ),
+                alt.Tooltip(
+                    "Percentage:Q",
+                    title="Percentage",
+                    format=".2f"
+                )
+            ]
+        )
+        .properties(
+            height=300
+        )
+    )
+
+    return chart
+
+
+# ---------------------------------------------------------
+# 5. Create arrivals and departures datasets
+# ---------------------------------------------------------
+
+arr = df_1[df_1['Inventory']== 'Int. Arr. Inventory'].copy()
+dep = df_1[df_1['Inventory']== 'Int. Dep. Inventory'].copy()
+
+
+
+# ---------------------------------------------------------
+# 6. Create the two-column layout
+# ---------------------------------------------------------
+
+col1, col2 = st.columns(2)
+
+
+# ---------------------------------------------------------
+# 7. International arrivals
+# ---------------------------------------------------------
+
+with col1:
+
+    st.subheader("International arrivals")
+
+    arrivals_chart = create_voyage_stop_pie(
+        arr,
+        voy_col,
+        stop_col,
+        total_col
+    )
+
+    st.altair_chart(
+        arrivals_chart,
+        use_container_width=True
+    )
+
+
+# ---------------------------------------------------------
+# 8. International departures
+# ---------------------------------------------------------
+
+with col2:
+
+    st.subheader("International departures")
+
+    departures_chart = create_voyage_stop_pie(
+        dep,
+        voy_col,
+        stop_col,
+        total_col
+    )
+
+    st.altair_chart(
+        departures_chart,
+        use_container_width=True
+    )
 # arr = df[
 #     df["Inventory"] == "Int. Arr. Inventory"
 # ].copy()
