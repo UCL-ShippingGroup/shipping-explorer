@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import streamlit as st
+import altair as alt
 
 st.set_page_config(layout='wide')
 st.title('Global Overview')
