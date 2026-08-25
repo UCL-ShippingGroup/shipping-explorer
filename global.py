@@ -713,9 +713,7 @@ plot_df = plot_df[
 ].copy()
 
 
-
 # country level percentages
-
 
 plot_df["Port %"] = (
     plot_df[port_col]
@@ -731,7 +729,7 @@ plot_df["Voyage %"] = (
 
 fig = go.Figure()
 
-# function 
+# function
 
 def add_panel(data, inventory_name, x_offset):
 
@@ -764,36 +762,37 @@ def add_panel(data, inventory_name, x_offset):
 
         fig.add_trace(
             go.Box(
-            x=[position] * len(subset),
-            y=subset[value_col],
+                x=[position] * len(subset),
+                y=subset[value_col],
 
-            name=label,
+                name=label,
 
-            boxpoints=False,
-            width=0.5,
-            showlegend=False,
+                boxpoints=False,
+                width=0.5,
+                showlegend=False,
 
-            boxmean=True,
+                boxmean=True,
 
-            hovertemplate=(
-                "<b>" + label + "</b><br>"
-                "Maximum: %{upper:.2f}%<br>"
-                "Q3 (75%): %{q3:.2f}%<br>"
-                "Median: %{median:.2f}%<br>"
-                "Mean: " + f"{mean_value:.2f}%" + "<br>"
-                "Q1 (25%): %{q1:.2f}%<br>"
-                "Minimum: %{lower:.2f}%<br>"
-                "Countries: " + str(len(subset)) +
-                "<extra></extra>"
+                hovertemplate=(
+                    "<b>" + label + "</b><br>"
+                    "Maximum: %{upper:.2f}%<br>"
+                    "Q3 (75%): %{q3:.2f}%<br>"
+                    "Median: %{median:.2f}%<br>"
+                    "Mean: " + f"{mean_value:.2f}%" + "<br>"
+                    "Q1 (25%): %{q1:.2f}%<br>"
+                    "Minimum: %{lower:.2f}%<br>"
+                    "Countries: " + str(len(subset)) +
+                    "<extra></extra>"
                 )
             )
         )
+
         is_selected = (
             subset["alpha-3"] == selected_iso3
         )
-  
+
         # Normal Countries
-    
+
         normal = subset[~is_selected]
 
         normal_x = x_values[~is_selected]
@@ -840,7 +839,7 @@ def add_panel(data, inventory_name, x_offset):
             )
 
         # selected country
-       
+
         selected = subset[is_selected]
 
         selected_x = x_values[is_selected]
@@ -890,7 +889,6 @@ def add_panel(data, inventory_name, x_offset):
             )
 
 
-
 # Add International arrivals
 
 add_panel(
@@ -900,9 +898,7 @@ add_panel(
 )
 
 
-
 # Add international departures
-
 
 add_panel(
     plot_df,
