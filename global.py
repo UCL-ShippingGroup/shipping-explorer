@@ -145,10 +145,7 @@ df_1 = pd.read_csv(
     )
 )
 
-
-# ---------------------------------------------------------
-# 1. Metric selector
-# ---------------------------------------------------------
+#Metric selector
 
 metric = st.segmented_control(
     "Metric",
@@ -157,10 +154,7 @@ metric = st.segmented_control(
     key="metric_selection"
 )
 
-
-# ---------------------------------------------------------
-# 2. Select columns
-# ---------------------------------------------------------
+#Select columns
 
 if metric == "GHG emissions (t CO2e)":
 
@@ -177,9 +171,9 @@ else:
     value_title = "Energy demand (TJ)"
 
 
-# ---------------------------------------------------------
-# 3. Pie chart function
-# ---------------------------------------------------------
+
+#Pie chart function
+
 
 def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
 
@@ -193,7 +187,7 @@ def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
     stop_pct = stop / total * 100
 
     # Data for chart
-   pie_df = pd.DataFrame({
+    pie_df = pd.DataFrame({
         "State": ["In voyage", "In Port"],
         "Value": [voyage, stop],
         "Percentage": [voyage_pct, stop_pct],
@@ -205,7 +199,7 @@ def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
     })
 
     # Create pie chart
-    chart = (
+     chart = (
         alt.Chart(pie_df)
         .mark_arc(
             outerRadius=100
@@ -258,10 +252,8 @@ def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
 
     return chart + text
 
+#Filter arrivals and departures
 
-# ---------------------------------------------------------
-# 4. Filter arrivals and departures
-# ---------------------------------------------------------
 
 arr = df_1[
     df_1["Inventory"] == "Int. Arr. Inventory"
@@ -272,15 +264,15 @@ dep = df_1[
 ].copy()
 
 
-# ---------------------------------------------------------
-# 5. Display charts
-# ---------------------------------------------------------
+
+# Display charts
+
 
 col1, col2 = st.columns(2)
 
 with col1:
 
-    st.subheader("International arrivals")
+    st.markdown("#### International arrivals")
 
     arrivals_chart = create_voyage_stop_pie(
         arr,
@@ -297,7 +289,7 @@ with col1:
 
 with col2:
 
-    st.subheader("International departures")
+    st.markdown("#### International departures")
 
     departures_chart = create_voyage_stop_pie(
         dep,
