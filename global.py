@@ -140,7 +140,7 @@ input_dir = "https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explor
 
 df_1 = pd.read_csv(
     input_dir + "activity_inventories_v0.4/{0}/inventories.csv".format(
-        st.session_state.iso_code
+        st.session_state.iso_code)
 )
 
 col1, col2 = st.columns(2)
