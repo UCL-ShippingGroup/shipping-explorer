@@ -320,6 +320,199 @@ st.plotly_chart(
 )
 
 #"Reds"
+
+# ============================================================
+# CONTROLS
+# ============================================================
+
+chart_choice = st.segmented_control(
+    label="What type of voyages would you like to view?",
+    options=[
+        "International Arrivals",
+        "International Departures"
+    ],
+    default="International Arrivals",
+    key="percentage_voyage_type"
+)
+
+chart_choice2 = st.segmented_control(
+    label="Which indicator would you like to view?",
+    options=[
+        "GHG Emissions (t CO2e)",
+        "Energy Demand (TJ)"
+    ],
+    default="GHG Emissions (t CO2e)",
+    key="percentage_indicator"
+)
+
+chart_choice3 = st.segmented_control(
+    label="What breakdown of the voyage would you like?",
+    options=[
+        "Total",
+        "In Voyage",
+        "In Port"
+    ],
+    default="Total",
+    key="percentage_breakdown"
+)
+
+
+# ============================================================
+# ARRIVALS / DEPARTURES
+# ============================================================
+
+if chart_choice == "International Arrivals":
+
+    plot_df = df[
+        df["Inventory"] == "Int. Arr. Inventory"
+    ].copy()
+
+else:
+
+    plot_df = df[
+        df["Inventory"] == "Int. Dep. Inventory"
+    ].copy()
+
+
+# ============================================================
+# SELECT COLUMNS
+# ============================================================
+
+if chart_choice2 == "GHG Emissions (t CO2e)":
+
+    total_col = "co2e_t"
+    voyage_col = "co2e_t_voy"
+    port_col = "co2e_t_stop"
+
+else:
+
+    total_col = "ene_tj"
+    voyage_col = "ene_tj_voy"
+    port_col = "ene_tj_stop"
+
+
+# ============================================================
+# CALCULATE PERCENTAGE
+# ============================================================
+
+if chart_choice3 == "Total":
+
+    if chart_choice2 == "GHG Emissions (t CO2e)":
+        plot_df["map_percentage"] = plot_df["co2e_t_pc"]
+    else:
+        plot_df["map_percentage"] = plot_df["ene_tj_pc"]
+
+    percentage_label = "Share of total"
+
+elif chart_choice3 == "In Port":
+
+    # --------------------------------------------------------
+    # Port as % of that country's total
+    # --------------------------------------------------------
+
+    plot_df["map_percentage"] = (
+        plot_df[port_col]
+        / plot_df[total_col]
+        * 100
+    )
+
+    percentage_label = "Share in port"
+
+
+else:
+
+    # --------------------------------------------------------
+    # Voyage as % of that country's total
+    # --------------------------------------------------------
+
+    plot_df["map_percentage"] = (
+        plot_df[voyage_col]
+        / plot_df[total_col]
+        * 100
+    )
+
+    percentage_label = "Share in voyage"
+
+
+# ============================================================
+# REMOVE INVALID VALUES
+# ============================================================
+
+plot_df = plot_df[
+    plot_df["map_percentage"].notna()
+].copy()
+
+
+# ============================================================
+# PLOTLY MAP
+# ============================================================
+
+fig = px.choropleth(
+    plot_df,
+
+    locations="alpha-3",
+    locationmode="ISO-3",
+
+    color="map_percentage",
+
+    hover_name="alpha-3",
+
+    color_continuous_scale="RdYlGn_r",
+
+    labels={
+        "map_percentage": "%"
+    },
+
+    title=(
+        f"{chart_choice2} — "
+        f"{chart_choice3} — "
+        f"{chart_choice}"
+    )
+)
+
+
+# ============================================================
+# HOVER
+# ============================================================
+
+fig.update_traces(
+    hovertemplate=(
+        "<b>%{location}</b><br>"
+        + percentage_label +
+        ": %{z:.2f}%"
+        "<extra></extra>"
+    )
+)
+
+
+# ============================================================
+# LAYOUT
+# ============================================================
+
+fig.update_layout(
+    paper_bgcolor="white",
+    height=600,
+    width=400,
+    font_size=18
+)
+
+fig.update_geos(
+    showcoastlines=True,
+    coastlinecolor="Black",
+    showcountries=True,
+    countrycolor="gray",
+    fitbounds="locations"
+)
+
+
+# ============================================================
+# DISPLAY
+# ============================================================
+
+st.plotly_chart(
+    fig,
+    width="stretch"
+)
 st.subheader(
     "A Closer Look at {0} in the Global Context".format(
         st.session_state.iso_country),
