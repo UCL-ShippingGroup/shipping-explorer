@@ -23,7 +23,7 @@ st.markdown(
 
 # Define the pages
 main = st.Page("main.py", title="Overview", icon="🏡")
-globa = st.Page("global.py", title="Global Outlook", icon="🚢")
+globa = st.Page("global.py", title="Global Overview", icon="🚢")
 inventories = st.Page("inventories.py", title="Voyage Inventories", icon="🚢")
 #trade = st.Page("trade.py", title="Seaborne Trade Portfolios", icon="📦")
 #impact_tracking = st.Page("impact_tracking.py", title="NZF Economic Impacts", icon="💵")
