@@ -760,7 +760,9 @@ def add_panel(data, inventory_name, x_offset):
 
         # box plot
 
-        fig.add_trace(
+        mean_value = subset[value_col].mean()
+
+fig.add_trace(
     go.Box(
         x=[position] * len(subset),
         y=subset[value_col],
@@ -768,16 +770,17 @@ def add_panel(data, inventory_name, x_offset):
         name=label,
 
         boxpoints=False,
-
         width=0.5,
-
         showlegend=False,
+
+        boxmean=True,
 
         hovertemplate=(
             "<b>" + label + "</b><br>"
             "Maximum: %{upper:.2f}%<br>"
             "Q3 (75%): %{q3:.2f}%<br>"
             "Median: %{median:.2f}%<br>"
+            "Mean: " + f"{mean_value:.2f}%" + "<br>"
             "Q1 (25%): %{q1:.2f}%<br>"
             "Minimum: %{lower:.2f}%<br>"
             "Countries: " + str(len(subset)) +
@@ -785,7 +788,6 @@ def add_panel(data, inventory_name, x_offset):
         )
     )
 )
-
         is_selected = (
             subset["alpha-3"] == selected_iso3
         )
