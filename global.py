@@ -133,7 +133,7 @@ st.plotly_chart(
 st.subheader(
     "A Closer Look at {0} in the Global Context".format(
         st.session_state.iso_country),
-    divider = 'grey'
+    divider = 'grey')
 
 
 input_dir = "https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explorer/main/datasets/"
