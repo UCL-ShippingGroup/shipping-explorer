@@ -587,38 +587,6 @@ fig.update_layout(
     )
 )
 
-
-fig.add_annotation(
-    x=0.5,
-    y=1.08,
-    xref="x",
-    yref="paper",
-
-    text="<b>International Arrivals</b>",
-
-    showarrow=False,
-
-    font=dict(
-        size=16
-    )
-)
-
-fig.add_annotation(
-    x=3.5,
-    y=1.08,
-    xref="x",
-    yref="paper",
-
-    text="<b>International Departures</b>",
-
-    showarrow=False,
-
-    font=dict(
-        size=16
-    )
-)
-
-
 fig.add_vline(
     x=2,
     line_width=1,
