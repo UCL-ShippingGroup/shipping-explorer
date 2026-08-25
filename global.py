@@ -3,6 +3,7 @@ import numpy as np
 import plotly.express as px
 import streamlit as st
 import altair as alt
+import plotly.graph_objects as go
 
 st.set_page_config(layout='wide')
 st.title('Global Overview')
