@@ -788,9 +788,9 @@ fig.add_trace(
         )
     )
 )
-        is_selected = (
+is_selected = (
             subset["alpha-3"] == selected_iso3
-        )
+)
   
         # Normal Countries
     
