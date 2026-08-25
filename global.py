@@ -303,10 +303,6 @@ with col2:
     )
 
 
-
-
-
-
 if metric == "GHG emissions (t CO2e)":
 
     total_col = "co2e_t"
@@ -324,19 +320,16 @@ else:
     unit = "TJ"
 
 
-# ============================================================
+
 # GET SELECTED COUNTRY FROM SESSION STATE
-# ============================================================
+
 
 selected_iso3 = st.session_state.get(
     "iso_3",
     None
 )
 
-
-# ============================================================
-# PREPARE DATA
-# ============================================================
+# prepare data
 
 plot_df = df.copy()
 
@@ -347,9 +340,9 @@ plot_df = plot_df[
 ].copy()
 
 
-# ============================================================
-# CALCULATE COUNTRY-LEVEL PERCENTAGES
-# ============================================================
+
+# country level percentages
+
 
 plot_df["Port %"] = (
     plot_df[port_col]
@@ -363,17 +356,9 @@ plot_df["Voyage %"] = (
     * 100
 )
 
-
-# ============================================================
-# CREATE FIGURE
-# ============================================================
-
 fig = go.Figure()
 
-
-# ============================================================
-# FUNCTION TO ADD ARRIVAL / DEPARTURE PANEL
-# ============================================================
+# function 
 
 def add_panel(data, inventory_name, x_offset):
 
@@ -390,10 +375,6 @@ def add_panel(data, inventory_name, x_offset):
 
         subset = panel_data.copy()
 
-        # ----------------------------------------------------
-        # Jitter
-        # ----------------------------------------------------
-
         np.random.seed(42 + position)
 
         jitter = np.random.uniform(
@@ -404,10 +385,7 @@ def add_panel(data, inventory_name, x_offset):
 
         x_values = position + jitter
 
-
-        # ----------------------------------------------------
-        # BOX PLOT
-        # ----------------------------------------------------
+        # box plot
 
         fig.add_trace(
             go.Box(
@@ -426,20 +404,12 @@ def add_panel(data, inventory_name, x_offset):
             )
         )
 
-
-        # ----------------------------------------------------
-        # IDENTIFY SELECTED COUNTRY
-        # ----------------------------------------------------
-
         is_selected = (
             subset["alpha-3"] == selected_iso3
         )
-
-
-        # ====================================================
-        # NORMAL COUNTRIES
-        # ====================================================
-
+  
+        # Normal Countries
+    
         normal = subset[~is_selected]
 
         normal_x = x_values[~is_selected]
@@ -447,7 +417,7 @@ def add_panel(data, inventory_name, x_offset):
         if len(normal) > 0:
 
             customdata_normal = np.column_stack([
-                normal["iso_country"],
+                normal["alpha-3"],
                 normal[total_col],
                 normal[port_col],
                 normal[voyage_col]
@@ -485,11 +455,8 @@ def add_panel(data, inventory_name, x_offset):
                 )
             )
 
-
-        # ====================================================
-        # SELECTED COUNTRY
-        # ====================================================
-
+        # selected country
+       
         selected = subset[is_selected]
 
         selected_x = x_values[is_selected]
@@ -497,7 +464,7 @@ def add_panel(data, inventory_name, x_offset):
         if len(selected) > 0:
 
             customdata_selected = np.column_stack([
-                selected["iso_country"],
+                selected["alpha-3"],
                 selected[total_col],
                 selected[port_col],
                 selected[voyage_col]
@@ -539,9 +506,8 @@ def add_panel(data, inventory_name, x_offset):
             )
 
 
-# ============================================================
-# ADD INTERNATIONAL ARRIVALS
-# ============================================================
+
+# Add International arrivals
 
 add_panel(
     plot_df,
@@ -550,20 +516,15 @@ add_panel(
 )
 
 
-# ============================================================
-# ADD INTERNATIONAL DEPARTURES
-# ============================================================
+
+# Add international departures
+
 
 add_panel(
     plot_df,
     "Int. Dep. Inventory",
     3
 )
-
-
-# ============================================================
-# LAYOUT
-# ============================================================
 
 fig.update_layout(
 
@@ -579,10 +540,6 @@ fig.update_layout(
         t=90,
         b=60
     ),
-
-    # --------------------------------------------------------
-    # X AXIS
-    # --------------------------------------------------------
 
     xaxis=dict(
         tickmode="array",
@@ -609,10 +566,6 @@ fig.update_layout(
         title=None
     ),
 
-    # --------------------------------------------------------
-    # Y AXIS
-    # --------------------------------------------------------
-
     yaxis=dict(
         title="Percentage of country's total",
 
@@ -625,10 +578,6 @@ fig.update_layout(
     )
 )
 
-
-# ============================================================
-# PANEL TITLES
-# ============================================================
 
 fig.add_annotation(
     x=0.5,
@@ -661,20 +610,11 @@ fig.add_annotation(
 )
 
 
-# ============================================================
-# SEPARATOR BETWEEN ARRIVALS AND DEPARTURES
-# ============================================================
-
 fig.add_vline(
     x=2,
     line_width=1,
     line_dash="dash"
 )
-
-
-# ============================================================
-# DISPLAY CHART
-# ============================================================
 
 st.plotly_chart(
     fig,
