@@ -183,30 +183,43 @@ else:
 
 def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
 
+    # Get the single values from the row
     voyage = df[voy_col].iloc[0]
     stop = df[stop_col].iloc[0]
     total = df[total_col].iloc[0]
 
+    # Calculate percentages
     voyage_pct = voyage / total * 100
     stop_pct = stop / total * 100
 
+    # Data for chart
     pie_df = pd.DataFrame({
         "State": ["In voyage", "In Port"],
         "Value": [voyage, stop],
-        "Percentage": [voyage_pct, stop_pct]
+        "Percentage": [voyage_pct, stop_pct],
+        "Total": [total, total]
     })
 
+    # Create pie chart
     chart = (
         alt.Chart(pie_df)
-        .mark_arc()
+        .mark_arc(
+            outerRadius=100
+        )
         .encode(
-            theta=alt.Theta("Value:Q"),
+            theta=alt.Theta(
+                "Value:Q",
+                stack=True
+            ),
             color=alt.Color(
                 "State:N",
                 legend=alt.Legend(title=None)
             ),
             tooltip=[
-                alt.Tooltip("State:N", title="State"),
+                alt.Tooltip(
+                    "State:N",
+                    title="State"
+                ),
                 alt.Tooltip(
                     "Value:Q",
                     title=value_title,
@@ -216,13 +229,36 @@ def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
                     "Percentage:Q",
                     title="Percentage",
                     format=".2f"
+                ),
+                alt.Tooltip(
+                    "Total:Q",
+                    title=f"Total {value_title}",
+                    format=",.2f"
                 )
             ]
         )
-        .properties(height=300)
     )
 
-    return chart
+    # Percentage labels
+    text = (
+        alt.Chart(pie_df)
+        .mark_text(
+            radius=120,
+            size=14
+        )
+        .encode(
+            theta=alt.Theta(
+                "Value:Q",
+                stack=True
+            ),
+            text=alt.Text(
+                "Percentage:Q",
+                format=".2f"
+            )
+        )
+    )
+
+    return chart + text
 
 
 # ---------------------------------------------------------
