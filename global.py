@@ -212,10 +212,9 @@ chart_choice3 = st.segmented_control(
   # Fourth segmented control
 chart_choice4 = st.segmented_control(
     label="Select statistical view",
-    options=["Absolute", "Percentage"],
+    options=["Absolute", "Average per voyage"],
     default="Absolute"
 )
-
 
 
 # ARRIVALS / DEPARTURES
@@ -244,37 +243,51 @@ column_map = {
     ("GHG Emissions (t CO2e)", "In Voyage", "Absolute"): "co2e_t_voy",
     ("GHG Emissions (t CO2e)", "In Port", "Absolute"): "co2e_t_stop",
 
-    # GHG - Percentage
-    ("GHG Emissions (t CO2e)", "Total", "Percentage"): "co2e_t_pc",
-    ("GHG Emissions (t CO2e)", "In Voyage", "Percentage"): "co2e_t_voy_pc",
-    ("GHG Emissions (t CO2e)", "In Port", "Percentage"): "co2e_t_stop_pc",
-
     # Energy - Absolute
     ("Energy Demand (TJ)", "Total", "Absolute"): "ene_tj",
     ("Energy Demand (TJ)", "In Voyage", "Absolute"): "ene_tj_voy",
     ("Energy Demand (TJ)", "In Port", "Absolute"): "ene_tj_stop",
-
-    # Energy - Percentage
-    ("Energy Demand (TJ)", "Total", "Percentage"): "ene_tj_pc",
-    ("Energy Demand (TJ)", "In Voyage", "Percentage"): "ene_tj_voy_pc",
-    ("Energy Demand (TJ)", "In Port", "Percentage"): "ene_tj_stop_pc",
 }
 
+if chart_choice4 == "Absolute":
 
-selected_column = column_map[
-    (chart_choice2, chart_choice3, chart_choice4)
-]
+    selected_column = column_map[
+        (chart_choice2, chart_choice3, chart_choice4)
+    ]
+
+else:
+
+    # Select the appropriate absolute column
+    selected_column = column_map[
+        (chart_choice2, chart_choice3, "Absolute")
+    ]
+
+    # Calculate average per voyage
+    plot_df["Average per voyage"] = (
+        plot_df[selected_column] / plot_df["n_iso"]
+    )
+
+    selected_column = "Average per voyage"
+
 
 
 # -----------------------------
 # GRAPH LABELS
 # -----------------------------
 
-if chart_choice4 == "Percentage":
-    unit = "%"
+if chart_choice4 == "Average per voyage":
+
+    if chart_choice2 == "GHG Emissions (t CO2e)":
+        unit = "t CO2e / voyage"
+    else:
+        unit = "TJ / voyage"
+
 elif chart_choice2 == "GHG Emissions (t CO2e)":
+
     unit = "t CO2e"
+
 else:
+
     unit = "TJ"
 
 
@@ -290,7 +303,7 @@ fig = px.choropleth(
     hover_name='alpha-3',
     color_continuous_scale="RdYlGn_r",
     labels={selected_column: unit},
-    title=f"{chart_choice2} — {chart_choice3} — {chart_choice}"
+    title=f"{chart_choice2} — {chart_choice3} — {chart_choice4} — {chart_choice}"
 )
 fig.update_layout(paper_bgcolor="white",height= 600, width=400,font_size=18)
 fig.update_geos(
