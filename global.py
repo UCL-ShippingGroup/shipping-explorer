@@ -109,14 +109,14 @@ with c2:
     st.metric(
         "In port",
         f"{port_ghg:,.0f} t CO₂e",
-        f"{port_ghg_pct:.1f}%",
+        f"{port_ghg_pct:.2f}%",
         border=True
     )
 
     st.metric(
         "In voyage",
         f"{voyage_ghg:,.0f} t CO₂e",
-        f"{voyage_ghg_pct:.1f}%",
+        f"{voyage_ghg_pct:.2f}%",
         border=True
     )
 
@@ -156,14 +156,14 @@ with c3:
     st.metric(
         "In port",
         f"{port_energy:,.0f} TJ",
-        f"{port_energy_pct:.1f}%",
+        f"{port_energy_pct:.2f}%",
         border=True
     )
 
     st.metric(
         "In voyage",
         f"{voyage_energy:,.0f} TJ",
-        f"{voyage_energy_pct:.1f}%",
+        f"{voyage_energy_pct:.2f}%",
         border=True
     )
 
@@ -264,7 +264,7 @@ else:
 
     # Calculate average per voyage
     plot_df["Average per voyage"] = (
-        plot_df[selected_column] / plot_df["n_iso"]
+        plot_df[selected_column] / plot_df["n_vys"]
     )
 
     selected_column = "Average per voyage"
