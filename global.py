@@ -201,7 +201,10 @@ def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
             outerRadius=100
         )
         .encode(
-            theta=alt.Theta("Value:Q"),
+            theta=alt.Theta(
+                "Value:Q",
+                stack=True
+            ),
             color=alt.Color(
                 "State:N",
                 legend=alt.Legend(title=None)
@@ -233,11 +236,14 @@ def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
     text = (
         alt.Chart(pie_df)
         .mark_text(
-            radius=0,
+            radius=60,
             size=14
         )
         .encode(
-            theta=alt.Theta("Value:Q"),
+            theta=alt.Theta(
+                "Value:Q",
+                stack=True
+            ),
             text=alt.Text("Percentage_label:N")
         )
     )
