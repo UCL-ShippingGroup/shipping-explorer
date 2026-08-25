@@ -305,9 +305,7 @@ with col2:
 
 
 
-# --------------------------------------------------
-# Select columns based on metric
-# --------------------------------------------------
+
 
 if metric == "GHG emissions (t CO2e)":
 
@@ -326,162 +324,246 @@ else:
     unit = "TJ"
 
 
-# --------------------------------------------------
-# Create percentages for each country
-# --------------------------------------------------
+# ============================================================
+# GET SELECTED COUNTRY FROM SESSION STATE
+# ============================================================
+
+selected_iso3 = st.session_state.get(
+    "iso_3",
+    None
+)
+
+
+# ============================================================
+# PREPARE DATA
+# ============================================================
 
 plot_df = df.copy()
 
+# Remove countries with missing/zero totals
+plot_df = plot_df[
+    plot_df[total_col].notna()
+    & (plot_df[total_col] > 0)
+].copy()
+
+
+# ============================================================
+# CALCULATE COUNTRY-LEVEL PERCENTAGES
+# ============================================================
+
 plot_df["Port %"] = (
-    plot_df[port_col] /
-    plot_df[total_col] *
-    100
+    plot_df[port_col]
+    / plot_df[total_col]
+    * 100
 )
 
 plot_df["Voyage %"] = (
-    plot_df[voyage_col] /
-    plot_df[total_col] *
-    100
+    plot_df[voyage_col]
+    / plot_df[total_col]
+    * 100
 )
 
 
-# Remove invalid observations
-plot_df = plot_df[
-    plot_df[total_col].notna() &
-    (plot_df[total_col] > 0)
-].copy()
-
-
-# --------------------------------------------------
-# Separate arrivals and departures
-# --------------------------------------------------
-
-arrivals = plot_df[
-    plot_df["Inventory"] == "Int. Arr. Inventory"
-].copy()
-
-departures = plot_df[
-    plot_df["Inventory"] == "Int. Dep. Inventory"
-].copy()
-
-
-# --------------------------------------------------
-# Create figure
-# --------------------------------------------------
+# ============================================================
+# CREATE FIGURE
+# ============================================================
 
 fig = go.Figure()
 
 
-# Positions on x-axis
-#
-# In Port:
-#   Arrivals = 0
-#   Departures = 1
-#
-# In Voyage:
-#   Arrivals = 3
-#   Departures = 4
+# ============================================================
+# FUNCTION TO ADD ARRIVAL / DEPARTURE PANEL
+# ============================================================
 
-groups = [
-    ("In Port", arrivals, "Port %", 0),
-    ("In Port", departures, "Port %", 1),
-    ("In Voyage", arrivals, "Voyage %", 3),
-    ("In Voyage", departures, "Voyage %", 4),
-]
+def add_panel(data, inventory_name, x_offset):
 
+    panel_data = data[
+        data["Inventory"] == inventory_name
+    ].copy()
 
-# --------------------------------------------------
-# Add boxplots + swarm points
-# --------------------------------------------------
+    categories = [
+        ("In Port", "Port %", x_offset),
+        ("In Voyage", "Voyage %", x_offset + 1)
+    ]
 
-np.random.seed(42)
+    for label, value_col, position in categories:
 
-for group_name, data, value_col, position in groups:
+        subset = panel_data.copy()
 
-    # -------------------------------
-    # Boxplot
-    # -------------------------------
+        # ----------------------------------------------------
+        # Jitter
+        # ----------------------------------------------------
 
-    fig.add_trace(
-        go.Box(
-            x=[position] * len(data),
-            y=data[value_col],
+        np.random.seed(42 + position)
 
-            name=group_name,
-
-            boxpoints=False,
-
-            width=0.55,
-
-            showlegend=False,
-
-            hoverinfo="skip"
+        jitter = np.random.uniform(
+            -0.15,
+            0.15,
+            size=len(subset)
         )
-    )
+
+        x_values = position + jitter
 
 
-    # -------------------------------
-    # Jittered swarm points
-    # -------------------------------
+        # ----------------------------------------------------
+        # BOX PLOT
+        # ----------------------------------------------------
 
-    jitter = np.random.uniform(
-        -0.16,
-        0.16,
-        len(data)
-    )
+        fig.add_trace(
+            go.Box(
+                x=[position] * len(subset),
+                y=subset[value_col],
 
-    x_values = position + jitter
+                name=label,
 
+                boxpoints=False,
 
-    # -------------------------------
-    # Country information
-    # -------------------------------
+                width=0.5,
 
-    # Change "country" below if your
-    # country-name column has a
-    # different name.
+                showlegend=False,
 
-    country_col = "alpha-3"
-
-    customdata = np.column_stack([
-        data[country_col],
-        data[total_col],
-        data[port_col],
-        data[voyage_col]
-    ])
-
-
-    fig.add_trace(
-        go.Scatter(
-            x=x_values,
-            y=data[value_col],
-
-            mode="markers",
-
-            showlegend=False,
-
-            marker=dict(
-                size=7,
-                opacity=0.75
-            ),
-
-            customdata=customdata,
-
-            hovertemplate=(
-                "<b>%{customdata[0]}</b><br>"
-                "Percentage: %{y:.2f}%<br>"
-                "Total: %{customdata[1]:,.2f} " + unit + "<br>"
-                "In port: %{customdata[2]:,.2f} " + unit + "<br>"
-                "In voyage: %{customdata[3]:,.2f} " + unit +
-                "<extra></extra>"
+                hoverinfo="skip"
             )
         )
-    )
 
 
-# --------------------------------------------------
-# Layout
-# --------------------------------------------------
+        # ----------------------------------------------------
+        # IDENTIFY SELECTED COUNTRY
+        # ----------------------------------------------------
+
+        is_selected = (
+            subset["alpha-3"] == selected_iso3
+        )
+
+
+        # ====================================================
+        # NORMAL COUNTRIES
+        # ====================================================
+
+        normal = subset[~is_selected]
+
+        normal_x = x_values[~is_selected]
+
+        if len(normal) > 0:
+
+            customdata_normal = np.column_stack([
+                normal["iso_country"],
+                normal[total_col],
+                normal[port_col],
+                normal[voyage_col]
+            ])
+
+            fig.add_trace(
+                go.Scatter(
+                    x=normal_x,
+                    y=normal[value_col],
+
+                    mode="markers",
+
+                    showlegend=False,
+
+                    marker=dict(
+                        size=7,
+                        color="blue",
+                        opacity=0.65
+                    ),
+
+                    customdata=customdata_normal,
+
+                    hovertemplate=(
+                        "<b>%{customdata[0]}</b><br>"
+                        + label +
+                        ": %{y:.2f}%<br>"
+                        "Total: %{customdata[1]:,.2f} "
+                        + unit + "<br>"
+                        "In port: %{customdata[2]:,.2f} "
+                        + unit + "<br>"
+                        "In voyage: %{customdata[3]:,.2f} "
+                        + unit +
+                        "<extra></extra>"
+                    )
+                )
+            )
+
+
+        # ====================================================
+        # SELECTED COUNTRY
+        # ====================================================
+
+        selected = subset[is_selected]
+
+        selected_x = x_values[is_selected]
+
+        if len(selected) > 0:
+
+            customdata_selected = np.column_stack([
+                selected["iso_country"],
+                selected[total_col],
+                selected[port_col],
+                selected[voyage_col]
+            ])
+
+            fig.add_trace(
+                go.Scatter(
+                    x=selected_x,
+                    y=selected[value_col],
+
+                    mode="markers",
+
+                    showlegend=False,
+
+                    marker=dict(
+                        size=14,
+                        color="yellow",
+                        line=dict(
+                            color="black",
+                            width=1.5
+                        )
+                    ),
+
+                    customdata=customdata_selected,
+
+                    hovertemplate=(
+                        "<b>%{customdata[0]}</b><br>"
+                        + label +
+                        ": %{y:.2f}%<br>"
+                        "Total: %{customdata[1]:,.2f} "
+                        + unit + "<br>"
+                        "In port: %{customdata[2]:,.2f} "
+                        + unit + "<br>"
+                        "In voyage: %{customdata[3]:,.2f} "
+                        + unit +
+                        "<extra></extra>"
+                    )
+                )
+            )
+
+
+# ============================================================
+# ADD INTERNATIONAL ARRIVALS
+# ============================================================
+
+add_panel(
+    plot_df,
+    "Int. Arr. Inventory",
+    0
+)
+
+
+# ============================================================
+# ADD INTERNATIONAL DEPARTURES
+# ============================================================
+
+add_panel(
+    plot_df,
+    "Int. Dep. Inventory",
+    3
+)
+
+
+# ============================================================
+# LAYOUT
+# ============================================================
 
 fig.update_layout(
 
@@ -489,49 +571,78 @@ fig.update_layout(
 
     template="plotly_white",
 
+    hovermode="closest",
+
+    margin=dict(
+        l=70,
+        r=30,
+        t=90,
+        b=60
+    ),
+
+    # --------------------------------------------------------
+    # X AXIS
+    # --------------------------------------------------------
+
     xaxis=dict(
         tickmode="array",
 
-        tickvals=[0, 1, 3, 4],
+        tickvals=[
+            0,
+            1,
+            3,
+            4
+        ],
 
         ticktext=[
-            "Arrivals",
-            "Departures",
-            "Arrivals",
-            "Departures"
+            "In Port",
+            "In Voyage",
+            "In Port",
+            "In Voyage"
+        ],
+
+        range=[
+            -0.5,
+            4.5
         ],
 
         title=None
     ),
 
+    # --------------------------------------------------------
+    # Y AXIS
+    # --------------------------------------------------------
+
     yaxis=dict(
-        title="Share of country's total",
+        title="Percentage of country's total",
+
         ticksuffix="%",
-        range=[0, 100]
-    ),
 
-    hovermode="closest",
-
-    margin=dict(
-        l=60,
-        r=30,
-        t=40,
-        b=60
+        range=[
+            0,
+            100
+        ]
     )
 )
 
 
-# --------------------------------------------------
-# Add group labels
-# --------------------------------------------------
+# ============================================================
+# PANEL TITLES
+# ============================================================
 
 fig.add_annotation(
     x=0.5,
     y=1.08,
     xref="x",
     yref="paper",
-    text="<b>In Port</b>",
-    showarrow=False
+
+    text="<b>International Arrivals</b>",
+
+    showarrow=False,
+
+    font=dict(
+        size=16
+    )
 )
 
 fig.add_annotation(
@@ -539,18 +650,36 @@ fig.add_annotation(
     y=1.08,
     xref="x",
     yref="paper",
-    text="<b>In Voyage</b>",
-    showarrow=False
+
+    text="<b>International Departures</b>",
+
+    showarrow=False,
+
+    font=dict(
+        size=16
+    )
 )
 
 
-# --------------------------------------------------
-# Display
-# --------------------------------------------------
+# ============================================================
+# SEPARATOR BETWEEN ARRIVALS AND DEPARTURES
+# ============================================================
+
+fig.add_vline(
+    x=2,
+    line_width=1,
+    line_dash="dash"
+)
+
+
+# ============================================================
+# DISPLAY CHART
+# ============================================================
 
 st.plotly_chart(
     fig,
     use_container_width=True
+)
 )
 # arr = df[
 #     df["Inventory"] == "Int. Arr. Inventory"
