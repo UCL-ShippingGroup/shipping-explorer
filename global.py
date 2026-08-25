@@ -300,6 +300,257 @@ with col2:
         departures_chart,
         use_container_width=True
     )
+
+
+
+
+# --------------------------------------------------
+# Select columns based on metric
+# --------------------------------------------------
+
+if metric == "GHG emissions (t CO2e)":
+
+    total_col = "co2e_t"
+    port_col = "co2e_t_stop"
+    voyage_col = "co2e_t_voy"
+
+    unit = "t CO2e"
+
+else:
+
+    total_col = "ene_tj"
+    port_col = "ene_tj_stop"
+    voyage_col = "ene_tj_voy"
+
+    unit = "TJ"
+
+
+# --------------------------------------------------
+# Create percentages for each country
+# --------------------------------------------------
+
+plot_df = df.copy()
+
+plot_df["Port %"] = (
+    plot_df[port_col] /
+    plot_df[total_col] *
+    100
+)
+
+plot_df["Voyage %"] = (
+    plot_df[voyage_col] /
+    plot_df[total_col] *
+    100
+)
+
+
+# Remove invalid observations
+plot_df = plot_df[
+    plot_df[total_col].notna() &
+    (plot_df[total_col] > 0)
+].copy()
+
+
+# --------------------------------------------------
+# Separate arrivals and departures
+# --------------------------------------------------
+
+arrivals = plot_df[
+    plot_df["Inventory"] == "Int. Arr. Inventory"
+].copy()
+
+departures = plot_df[
+    plot_df["Inventory"] == "Int. Dep. Inventory"
+].copy()
+
+
+# --------------------------------------------------
+# Create figure
+# --------------------------------------------------
+
+fig = go.Figure()
+
+
+# Positions on x-axis
+#
+# In Port:
+#   Arrivals = 0
+#   Departures = 1
+#
+# In Voyage:
+#   Arrivals = 3
+#   Departures = 4
+
+groups = [
+    ("In Port", arrivals, "Port %", 0),
+    ("In Port", departures, "Port %", 1),
+    ("In Voyage", arrivals, "Voyage %", 3),
+    ("In Voyage", departures, "Voyage %", 4),
+]
+
+
+# --------------------------------------------------
+# Add boxplots + swarm points
+# --------------------------------------------------
+
+np.random.seed(42)
+
+for group_name, data, value_col, position in groups:
+
+    # -------------------------------
+    # Boxplot
+    # -------------------------------
+
+    fig.add_trace(
+        go.Box(
+            x=[position] * len(data),
+            y=data[value_col],
+
+            name=group_name,
+
+            boxpoints=False,
+
+            width=0.55,
+
+            showlegend=False,
+
+            hoverinfo="skip"
+        )
+    )
+
+
+    # -------------------------------
+    # Jittered swarm points
+    # -------------------------------
+
+    jitter = np.random.uniform(
+        -0.16,
+        0.16,
+        len(data)
+    )
+
+    x_values = position + jitter
+
+
+    # -------------------------------
+    # Country information
+    # -------------------------------
+
+    # Change "country" below if your
+    # country-name column has a
+    # different name.
+
+    country_col = "alpha-3"
+
+    customdata = np.column_stack([
+        data[country_col],
+        data[total_col],
+        data[port_col],
+        data[voyage_col]
+    ])
+
+
+    fig.add_trace(
+        go.Scatter(
+            x=x_values,
+            y=data[value_col],
+
+            mode="markers",
+
+            showlegend=False,
+
+            marker=dict(
+                size=7,
+                opacity=0.75
+            ),
+
+            customdata=customdata,
+
+            hovertemplate=(
+                "<b>%{customdata[0]}</b><br>"
+                "Percentage: %{y:.2f}%<br>"
+                "Total: %{customdata[1]:,.2f} " + unit + "<br>"
+                "In port: %{customdata[2]:,.2f} " + unit + "<br>"
+                "In voyage: %{customdata[3]:,.2f} " + unit +
+                "<extra></extra>"
+            )
+        )
+    )
+
+
+# --------------------------------------------------
+# Layout
+# --------------------------------------------------
+
+fig.update_layout(
+
+    height=600,
+
+    template="plotly_white",
+
+    xaxis=dict(
+        tickmode="array",
+
+        tickvals=[0, 1, 3, 4],
+
+        ticktext=[
+            "Arrivals",
+            "Departures",
+            "Arrivals",
+            "Departures"
+        ],
+
+        title=None
+    ),
+
+    yaxis=dict(
+        title="Share of country's total",
+        ticksuffix="%",
+        range=[0, 100]
+    ),
+
+    hovermode="closest",
+
+    margin=dict(
+        l=60,
+        r=30,
+        t=40,
+        b=60
+    )
+)
+
+
+# --------------------------------------------------
+# Add group labels
+# --------------------------------------------------
+
+fig.add_annotation(
+    x=0.5,
+    y=1.08,
+    xref="x",
+    yref="paper",
+    text="<b>In Port</b>",
+    showarrow=False
+)
+
+fig.add_annotation(
+    x=3.5,
+    y=1.08,
+    xref="x",
+    yref="paper",
+    text="<b>In Voyage</b>",
+    showarrow=False
+)
+
+
+# --------------------------------------------------
+# Display
+# --------------------------------------------------
+
+st.plotly_chart(
+    fig,
+    use_container_width=True
+)
 # arr = df[
 #     df["Inventory"] == "Int. Arr. Inventory"
 # ].copy()
