@@ -177,16 +177,13 @@ else:
 
 def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
 
-    # Get the single values from the row
     voyage = df[voy_col].iloc[0]
     stop = df[stop_col].iloc[0]
     total = df[total_col].iloc[0]
 
-    # Calculate percentages
     voyage_pct = voyage / total * 100
     stop_pct = stop / total * 100
 
-    # Data for chart
     pie_df = pd.DataFrame({
         "State": ["In voyage", "In Port"],
         "Value": [voyage, stop],
@@ -198,17 +195,13 @@ def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
         "Total": [total, total]
     })
 
-    # Create pie chart
-     chart = (
+    chart = (
         alt.Chart(pie_df)
         .mark_arc(
             outerRadius=100
         )
         .encode(
-            theta=alt.Theta(
-                "Value:Q",
-                stack=True
-            ),
+            theta=alt.Theta("Value:Q"),
             color=alt.Color(
                 "State:N",
                 legend=alt.Legend(title=None)
@@ -237,7 +230,6 @@ def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
         )
     )
 
-    # Percentage labels
     text = (
         alt.Chart(pie_df)
         .mark_text(
