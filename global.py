@@ -141,22 +141,14 @@ input_dir = "https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explor
 
 df_1 = pd.read_csv(
     input_dir + "activity_inventories_v0.4/{0}/inventories.csv".format(
-        st.session_state.iso_code)
+        st.session_state.iso_code
+    )
 )
 
-col1, col2 = st.columns(2)
 
-with col1:
-    st.subheader("International arrivals")
-    
-    # arrivals data
-    # create pie chart
-
-with col2:
-    st.subheader("International departures")
-    
-    # departures data
-    # create pie chart
+# ---------------------------------------------------------
+# 1. Metric selector
+# ---------------------------------------------------------
 
 metric = st.segmented_control(
     "Metric",
@@ -167,16 +159,18 @@ metric = st.segmented_control(
 
 
 # ---------------------------------------------------------
-# 3. Select the appropriate columns
+# 2. Select columns
 # ---------------------------------------------------------
 
-if metric == "GHG emissions":
+if metric == "GHG emissions (t CO2e)":
+
     voy_col = "co2e_t_voy"
     stop_col = "co2e_t_stop"
     total_col = "co2e_t"
     value_title = "CO₂e (tonnes)"
 
 else:
+
     voy_col = "ene_tj_voy"
     stop_col = "ene_tj_stop"
     total_col = "ene_tj"
@@ -184,45 +178,35 @@ else:
 
 
 # ---------------------------------------------------------
-# 4. Function to create the pie chart
+# 3. Pie chart function
 # ---------------------------------------------------------
 
 def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
 
-    # Get the values
-    voyage = df[voy_col]
-    stop = df[stop_col]
-    total = df[total_col]
+    voyage = df[voy_col].iloc[0]
+    stop = df[stop_col].iloc[0]
+    total = df[total_col].iloc[0]
 
-    # Calculate percentages using the existing total
     voyage_pct = voyage / total * 100
     stop_pct = stop / total * 100
 
-    # Data for chart
     pie_df = pd.DataFrame({
         "State": ["In voyage", "In Port"],
         "Value": [voyage, stop],
         "Percentage": [voyage_pct, stop_pct]
     })
 
-    # Create pie chart
     chart = (
         alt.Chart(pie_df)
         .mark_arc()
         .encode(
-            theta=alt.Theta(
-                "Value:Q",
-                stack=True
-            ),
+            theta=alt.Theta("Value:Q"),
             color=alt.Color(
                 "State:N",
                 legend=alt.Legend(title=None)
             ),
             tooltip=[
-                alt.Tooltip(
-                    "State:N",
-                    title="State"
-                ),
+                alt.Tooltip("State:N", title="State"),
                 alt.Tooltip(
                     "Value:Q",
                     title=value_title,
@@ -235,33 +219,30 @@ def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
                 )
             ]
         )
-        .properties(
-            height=300
-        )
+        .properties(height=300)
     )
 
     return chart
 
 
 # ---------------------------------------------------------
-# 5. Create arrivals and departures datasets
+# 4. Filter arrivals and departures
 # ---------------------------------------------------------
 
-arr = df_1[df_1['Inventory']== 'Int. Arr. Inventory'].copy()
-dep = df_1[df_1['Inventory']== 'Int. Dep. Inventory'].copy()
+arr = df_1[
+    df_1["Inventory"] == "Int. Arr. Inventory"
+].copy()
 
+dep = df_1[
+    df_1["Inventory"] == "Int. Dep. Inventory"
+].copy()
 
 
 # ---------------------------------------------------------
-# 6. Create the two-column layout
+# 5. Display charts
 # ---------------------------------------------------------
 
 col1, col2 = st.columns(2)
-
-
-# ---------------------------------------------------------
-# 7. International arrivals
-# ---------------------------------------------------------
 
 with col1:
 
@@ -279,10 +260,6 @@ with col1:
         use_container_width=True
     )
 
-
-# ---------------------------------------------------------
-# 8. International departures
-# ---------------------------------------------------------
 
 with col2:
 
