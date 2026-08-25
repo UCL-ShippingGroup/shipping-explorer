@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 
 st.set_page_config(layout='wide')
 st.title('Global Overview')
+st.divider()
 
 df = pd.read_csv("https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explorer/main/datasets/inventories_total.csv")
 
@@ -78,16 +79,7 @@ with c1:
 
     st.markdown(
         """
-        ### International shipping
-
-        International arrivals and departures capture the
-        energy demand and greenhouse gas emissions associated
-        with international shipping.
-
-        The figures distinguish between activity occurring
-        **in port** and **during the voyage**.
-
-        Average values are calculated per international voyage.
+        Blurb to come
         """
     )
 
