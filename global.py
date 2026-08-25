@@ -388,21 +388,30 @@ def add_panel(data, inventory_name, x_offset):
         # box plot
 
         fig.add_trace(
-            go.Box(
-                x=[position] * len(subset),
-                y=subset[value_col],
+    go.Box(
+        x=[position] * len(subset),
+        y=subset[value_col],
 
-                name=label,
+        name=label,
 
-                boxpoints=False,
+        boxpoints=False,
 
-                width=0.5,
+        width=0.5,
 
-                showlegend=False,
+        showlegend=False,
 
-                hoverinfo="skip"
-            )
+        hovertemplate=(
+            "<b>" + label + "</b><br>"
+            "Maximum: %{upper:.2f}%<br>"
+            "Q3 (75%): %{q3:.2f}%<br>"
+            "Median: %{median:.2f}%<br>"
+            "Q1 (25%): %{q1:.2f}%<br>"
+            "Minimum: %{lower:.2f}%<br>"
+            "Countries: " + str(len(subset)) +
+            "<extra></extra>"
         )
+    )
+)
 
         is_selected = (
             subset["alpha-3"] == selected_iso3
