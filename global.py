@@ -10,6 +10,181 @@ st.title('Global Overview')
 
 df = pd.read_csv("https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explorer/main/datasets/inventories_total.csv")
 
+all_int = df[
+    df["Inventory"] == "All International Voyages"
+].iloc[0]
+
+
+# ============================================================
+# GHG EMISSIONS
+# ============================================================
+
+total_ghg = all_int["co2e_t"]
+port_ghg = all_int["co2e_t_stop"]
+voyage_ghg = all_int["co2e_t_voy"]
+
+
+# ============================================================
+# ENERGY DEMAND
+# ============================================================
+
+total_energy = all_int["ene_tj"]
+port_energy = all_int["ene_tj_stop"]
+voyage_energy = all_int["ene_tj_voy"]
+
+
+# ============================================================
+# NUMBER OF VOYAGES
+# ============================================================
+
+total_voyages = all_int["n_vys"]
+
+
+# ============================================================
+# AVERAGES PER VOYAGE
+# ============================================================
+
+avg_ghg = total_ghg / total_voyages
+avg_port_ghg = port_ghg / total_voyages
+avg_voyage_ghg = voyage_ghg / total_voyages
+
+avg_energy = total_energy / total_voyages
+avg_port_energy = port_energy / total_voyages
+avg_voyage_energy = voyage_energy / total_voyages
+
+
+# ============================================================
+# PERCENTAGES
+# ============================================================
+
+port_ghg_pct = port_ghg / total_ghg * 100
+voyage_ghg_pct = voyage_ghg / total_ghg * 100
+
+port_energy_pct = port_energy / total_energy * 100
+voyage_energy_pct = voyage_energy / total_energy * 100
+
+# ============================================================
+# THREE COLUMN LAYOUT
+# ============================================================
+
+c1, c2, c3 = st.columns([2.3, 1, 1])
+
+
+# ============================================================
+# LEFT — TEXT
+# ============================================================
+
+with c1:
+
+    st.markdown(
+        """
+        ### International shipping
+
+        International arrivals and departures capture the
+        energy demand and greenhouse gas emissions associated
+        with international shipping.
+
+        The figures distinguish between activity occurring
+        **in port** and **during the voyage**.
+
+        Average values are calculated per international voyage.
+        """
+    )
+
+
+# ============================================================
+# MIDDLE — GHG EMISSIONS
+# ============================================================
+
+with c2:
+
+    st.markdown("### GHG emissions")
+
+    st.metric(
+        "Total international voyages",
+        f"{total_ghg:,.0f} t CO₂e",
+        border=True
+    )
+
+    st.metric(
+        "In port",
+        f"{port_ghg:,.0f} t CO₂e",
+        f"{port_ghg_pct:.1f}%",
+        border=True
+    )
+
+    st.metric(
+        "In voyage",
+        f"{voyage_ghg:,.0f} t CO₂e",
+        f"{voyage_ghg_pct:.1f}%",
+        border=True
+    )
+
+    st.metric(
+        "Average per voyage",
+        f"{avg_ghg:,.2f} t CO₂e",
+        border=True
+    )
+
+    st.metric(
+        "Average in port",
+        f"{avg_port_ghg:,.2f} t CO₂e",
+        border=True
+    )
+
+    st.metric(
+        "Average in voyage",
+        f"{avg_voyage_ghg:,.2f} t CO₂e",
+        border=True
+    )
+
+
+# ============================================================
+# RIGHT — ENERGY DEMAND
+# ============================================================
+
+with c3:
+
+    st.markdown("### Energy demand")
+
+    st.metric(
+        "Total international voyages",
+        f"{total_energy:,.0f} TJ",
+        border=True
+    )
+
+    st.metric(
+        "In port",
+        f"{port_energy:,.0f} TJ",
+        f"{port_energy_pct:.1f}%",
+        border=True
+    )
+
+    st.metric(
+        "In voyage",
+        f"{voyage_energy:,.0f} TJ",
+        f"{voyage_energy_pct:.1f}%",
+        border=True
+    )
+
+    st.metric(
+        "Average per voyage",
+        f"{avg_energy:,.2f} TJ",
+        border=True
+    )
+
+    st.metric(
+        "Average in port",
+        f"{avg_port_energy:,.2f} TJ",
+        border=True
+    )
+
+    st.metric(
+        "Average in voyage",
+        f"{avg_voyage_energy:,.2f} TJ",
+        border=True
+    )
+
 #arr = inventories[inventories['Inventory']== 'Int. Arr. Inventory']
 #dep = inventories[inventories['Inventory']== 'Int. Dep. Inventory']
 # First segmented control
