@@ -193,10 +193,14 @@ def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
     stop_pct = stop / total * 100
 
     # Data for chart
-    pie_df = pd.DataFrame({
+   pie_df = pd.DataFrame({
         "State": ["In voyage", "In Port"],
         "Value": [voyage, stop],
         "Percentage": [voyage_pct, stop_pct],
+        "Percentage_label": [
+            f"{voyage_pct:.2f}%",
+            f"{stop_pct:.2f}%"
+        ],
         "Total": [total, total]
     })
 
@@ -243,18 +247,12 @@ def create_voyage_stop_pie(df, voy_col, stop_col, total_col):
     text = (
         alt.Chart(pie_df)
         .mark_text(
-            radius=120,
+            radius=0,
             size=14
         )
         .encode(
-            theta=alt.Theta(
-                "Value:Q",
-                stack=True
-            ),
-            text=alt.Text(
-                "Percentage:Q",
-                format=".2f"
-            )
+            theta=alt.Theta("Value:Q"),
+            text=alt.Text("Percentage_label:N")
         )
     )
 
