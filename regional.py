@@ -802,33 +802,32 @@ def create_region_swarm(data, inventory_name):
 
         fig.add_trace(
             go.Scatter(
-
-                x=[x_position],
-
-                y=[mean_value],
-
-                mode="markers",
-
-                marker=dict(
-                    symbol="diamond",
-                    size=9,
-                    color="#404040",
-                    line=dict(
-                        color="white",
-                        width=1
-                    )
-                ),
-
-                showlegend=False,
-
-                customdata=[[
-                    region,
+                x=[
+                    x_position - 0.21,
+                    x_position + 0.21
+                ],
+                y=[
+                    mean_value,
                     mean_value
-                ]],
-
+                ],
+        
+                mode="lines",
+        
+                line=dict(
+                    color="#404040",
+                    width=2,
+                    dash="dot"
+                ),
+        
+                showlegend=False,
+        
+                customdata=[
+                    [region, mean_value],
+                    [region, mean_value]
+                ],
+        
                 hovertemplate=(
-                    "<b>%{customdata[0]}</b>"
-                    "<br>"
+                    "<b>%{customdata[0]}</b><br>"
                     "Mean: %{customdata[1]:.1f}%"
                     "<extra></extra>"
                 )
