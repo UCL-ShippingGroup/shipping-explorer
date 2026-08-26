@@ -1531,3 +1531,318 @@ st.plotly_chart(
     fig_status_swarm,
     use_container_width=True
 )
+
+# =========================================================
+# DEVELOPMENT STATUS SWARM + BOX PLOT
+# INTERNATIONAL ARRIVALS ONLY
+# =========================================================
+
+
+# ---------------------------------------------------------
+# Prepare data
+# ---------------------------------------------------------
+
+status_arrivals_df = df[
+    df["Inventory"] == "Int. Arr. Inventory"
+].copy()
+
+
+# Remove rows with missing status / invalid totals
+status_arrivals_df = status_arrivals_df[
+    status_arrivals_df["status"].notna()
+    & status_arrivals_df[total_col].notna()
+    & (status_arrivals_df[total_col] > 0)
+    & status_arrivals_df[port_col].notna()
+].copy()
+
+
+# ---------------------------------------------------------
+# Calculate each country's percentage in port
+# ---------------------------------------------------------
+
+status_arrivals_df["Port %"] = (
+    status_arrivals_df[port_col]
+    / status_arrivals_df[total_col]
+    * 100
+)
+
+
+# =========================================================
+# CREATE FIGURE
+# =========================================================
+
+fig_status_arrivals = go.Figure()
+
+
+# ---------------------------------------------------------
+# Order status groups by median
+# Lowest median on left -> highest on right
+# ---------------------------------------------------------
+
+status_order = (
+    status_arrivals_df
+    .groupby("status")["Port %"]
+    .median()
+    .sort_values(
+        ascending=True
+    )
+    .index
+    .tolist()
+)
+
+
+# ---------------------------------------------------------
+# Numeric x positions
+# ---------------------------------------------------------
+
+status_positions = {
+    status: i
+    for i, status in enumerate(
+        status_order
+    )
+}
+
+
+# =========================================================
+# LEGEND
+# =========================================================
+
+# Dummy trace so Countries appears once in legend
+
+fig_status_arrivals.add_trace(
+    go.Scatter(
+        x=[None],
+        y=[None],
+
+        mode="markers",
+
+        name="Countries",
+
+        marker=dict(
+            size=7,
+            color="blue",
+            opacity=0.65
+        ),
+
+        showlegend=True,
+
+        hoverinfo="skip"
+    )
+)
+
+
+# =========================================================
+# LOOP THROUGH DEVELOPMENT STATUS GROUPS
+# =========================================================
+
+for status in status_order:
+
+    subset = status_arrivals_df[
+        status_arrivals_df["status"] == status
+    ].copy()
+
+    position = status_positions[
+        status
+    ]
+
+
+    # -----------------------------------------------------
+    # Jitter
+    # -----------------------------------------------------
+
+    np.random.seed(
+        42 + position
+    )
+
+    jitter = np.random.uniform(
+        -0.15,
+        0.15,
+        size=len(subset)
+    )
+
+    x_values = (
+        position
+        + jitter
+    )
+
+
+    # -----------------------------------------------------
+    # Mean for boxplot hover
+    # -----------------------------------------------------
+
+    mean_value = (
+        subset["Port %"]
+        .mean()
+    )
+
+
+    # =====================================================
+    # BOX PLOT
+    # =====================================================
+
+    fig_status_arrivals.add_trace(
+        go.Box(
+
+            x=[
+                position
+            ] * len(subset),
+
+            y=subset["Port %"],
+
+            name=status,
+
+            boxpoints=False,
+
+            width=0.5,
+
+            showlegend=False,
+
+            # Display mean visually
+            boxmean=True,
+
+            hovertemplate=(
+                "<b>"
+                + status
+                + "</b><br>"
+                "Maximum: %{upper:.2f}%<br>"
+                "Q3 (75%): %{q3:.2f}%<br>"
+                "Median: %{median:.2f}%<br>"
+                "Mean: "
+                + f"{mean_value:.2f}%"
+                + "<br>"
+                "Q1 (25%): %{q1:.2f}%<br>"
+                "Minimum: %{lower:.2f}%<br>"
+                "Countries: "
+                + str(len(subset))
+                + "<extra></extra>"
+            )
+        )
+    )
+
+
+    # =====================================================
+    # COUNTRY DOTS
+    # =====================================================
+
+    customdata = np.column_stack([
+        subset["alpha-3"],
+        subset[total_col],
+        subset[port_col]
+    ])
+
+
+    fig_status_arrivals.add_trace(
+        go.Scatter(
+
+            x=x_values,
+
+            y=subset["Port %"],
+
+            mode="markers",
+
+            name="Countries",
+
+            showlegend=False,
+
+            marker=dict(
+                size=7,
+                color="blue",
+                opacity=0.65
+            ),
+
+            customdata=customdata,
+
+            hovertemplate=(
+                "<b>%{customdata[0]}</b><br>"
+                + status
+                + "<br><br>"
+                "In Port: %{y:.2f}%<br>"
+                "In Port ("
+                + unit
+                + "): %{customdata[2]:,.2f}<br>"
+                "Total ("
+                + unit
+                + "): %{customdata[1]:,.2f}"
+                "<extra></extra>"
+            )
+        )
+    )
+
+
+# =========================================================
+# LAYOUT
+# =========================================================
+
+fig_status_arrivals.update_layout(
+
+    height=600,
+
+    template="plotly_white",
+
+    hovermode="closest",
+
+    hoverdistance=5,
+
+    margin=dict(
+        l=70,
+        r=30,
+        t=40,
+        b=110
+    ),
+
+    xaxis=dict(
+
+        tickmode="array",
+
+        tickvals=list(
+            status_positions.values()
+        ),
+
+        ticktext=list(
+            status_positions.keys()
+        ),
+
+        range=[
+            -0.5,
+            len(status_order) - 0.5
+        ],
+
+        title=None
+    ),
+
+    yaxis=dict(
+
+        title="Percentage of country's total in port",
+
+        ticksuffix="%",
+
+        range=[
+            0,
+            100
+        ]
+    ),
+
+    legend=dict(
+        orientation="h",
+
+        yanchor="top",
+        y=-0.18,
+
+        xanchor="center",
+        x=0.5
+    )
+)
+
+
+# =========================================================
+# DISPLAY
+# =========================================================
+
+st.subheader(
+    "International arrivals by development status"
+)
+
+st.plotly_chart(
+    fig_status_arrivals,
+    use_container_width=True
+)
