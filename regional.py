@@ -537,14 +537,61 @@ st.plotly_chart(
 )
 
 
+import streamlit as st
+import pandas as pd
+import numpy as np
+import plotly.graph_objects as go
+
+
+# =========================================================
+# METRIC CONTROL
+# =========================================================
+
+metric = st.segmented_control(
+    "Metric",
+    options=[
+        "GHG emissions (t CO2e)",
+        "Energy Demand (TJ)"
+    ],
+    default="GHG emissions (t CO2e)",
+    key="region_swarm_metric"
+)
+
+
+# ---------------------------------------------------------
+# Select relevant columns and labels
+# ---------------------------------------------------------
+
+if metric == "GHG emissions (t CO2e)":
+
+    total_col = "co2e_t"
+    port_col = "co2e_t_stop"
+
+    port_hover_label = "In Port (t CO2e)"
+    total_hover_label = "Total (t CO2e)"
+
+else:
+
+    total_col = "ene_tj"
+    port_col = "ene_tj_stop"
+
+    port_hover_label = "In Port (TJ)"
+    total_hover_label = "Total (TJ)"
+
+
+# =========================================================
+# SELECTED COUNTRY
+# =========================================================
+
 selected_iso3 = st.session_state.get(
     "iso_3",
     None
 )
 
-# ---------------------------------------------------------
-# Prepare data
-# ---------------------------------------------------------
+
+# =========================================================
+# PREPARE DATA
+# =========================================================
 
 swarm_df = df[
     df["Inventory"].isin([
@@ -552,6 +599,7 @@ swarm_df = df[
         "Int. Dep. Inventory"
     ])
 ].copy()
+
 
 # Remove rows with missing regions / invalid totals
 swarm_df = swarm_df[
@@ -563,7 +611,7 @@ swarm_df = swarm_df[
 
 
 # ---------------------------------------------------------
-# Country-level % in port
+# Calculate each country's percentage in port
 # ---------------------------------------------------------
 
 swarm_df["Port %"] = (
@@ -573,17 +621,25 @@ swarm_df["Port %"] = (
 )
 
 
-# ---------------------------------------------------------
-# Create function
-# ---------------------------------------------------------
+# =========================================================
+# FUNCTION TO CREATE SWARM + BOX PLOT
+# =========================================================
 
 def create_region_swarm(data, inventory_name):
+
+    # -----------------------------------------------------
+    # Filter to arrivals or departures
+    # -----------------------------------------------------
 
     panel_data = data[
         data["Inventory"] == inventory_name
     ].copy()
 
+
+    # -----------------------------------------------------
     # Order regions by median Port %
+    # -----------------------------------------------------
+
     region_order = (
         panel_data
         .groupby("region_wb")["Port %"]
@@ -593,11 +649,20 @@ def create_region_swarm(data, inventory_name):
         .tolist()
     )
 
-    # Numeric x positions
+
+    # -----------------------------------------------------
+    # Numeric x positions for regions
+    # -----------------------------------------------------
+
     region_positions = {
         region: i
         for i, region in enumerate(region_order)
     }
+
+
+    # =====================================================
+    # CREATE FIGURE
+    # =====================================================
 
     fig = go.Figure()
 
@@ -614,8 +679,9 @@ def create_region_swarm(data, inventory_name):
 
         position = region_positions[region]
 
+
         # -------------------------------------------------
-        # Jitter
+        # Reproducible jitter
         # -------------------------------------------------
 
         np.random.seed(42 + position)
@@ -654,7 +720,15 @@ def create_region_swarm(data, inventory_name):
 
                 showlegend=False,
 
+                # Plotly draws the mean line
                 boxmean=True,
+
+                line=dict(
+                    color="#707070",
+                    width=1.5
+                ),
+
+                fillcolor="rgba(160,160,160,0.15)",
 
                 hovertemplate=(
                     "<b>" + region + "</b><br>"
@@ -686,7 +760,7 @@ def create_region_swarm(data, inventory_name):
 
         normal = subset[
             ~is_selected
-        ]
+        ].copy()
 
         normal_x = x_values[
             ~is_selected
@@ -710,7 +784,12 @@ def create_region_swarm(data, inventory_name):
 
                     mode="markers",
 
-                    showlegend=False,
+                    name="Countries",
+
+                    # Only show once in the legend
+                    showlegend=(
+                        region == region_order[0]
+                    ),
 
                     marker=dict(
                         size=7,
@@ -741,7 +820,7 @@ def create_region_swarm(data, inventory_name):
 
         selected = subset[
             is_selected
-        ]
+        ].copy()
 
         selected_x = x_values[
             is_selected
@@ -765,7 +844,12 @@ def create_region_swarm(data, inventory_name):
 
                     mode="markers",
 
-                    showlegend=False,
+                    name="Selected country",
+
+                    # Only show once in the legend
+                    showlegend=(
+                        region == region_order[0]
+                    ),
 
                     marker=dict(
                         size=14,
@@ -806,7 +890,7 @@ def create_region_swarm(data, inventory_name):
 
         hovermode="closest",
 
-        # More precise hover
+        # Makes hover much more precise
         hoverdistance=5,
 
         margin=dict(
@@ -844,6 +928,14 @@ def create_region_swarm(data, inventory_name):
                 0,
                 100
             ]
+        ),
+
+        legend=dict(
+            orientation="h",
+            yanchor="top",
+            y=-0.18,
+            xanchor="center",
+            x=0.5
         )
     )
 
@@ -854,9 +946,7 @@ def create_region_swarm(data, inventory_name):
 # INTERNATIONAL ARRIVALS
 # =========================================================
 
-st.subheader(
-    "International arrivals"
-)
+st.subheader("International arrivals")
 
 fig_arrivals = create_region_swarm(
     swarm_df,
@@ -873,9 +963,7 @@ st.plotly_chart(
 # INTERNATIONAL DEPARTURES
 # =========================================================
 
-st.subheader(
-    "International departures"
-)
+st.subheader("International departures")
 
 fig_departures = create_region_swarm(
     swarm_df,
