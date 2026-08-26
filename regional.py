@@ -336,3 +336,192 @@ with col2:
         fig_status,
         use_container_width=True
     )
+
+st.subheader(
+    "A Closer Look at {0} in the Global Context".format(
+        st.session_state.iso_country),
+    divider = 'grey')
+
+# ---------------------------------------------------------
+# Selected country and its region
+# ---------------------------------------------------------
+
+selected_iso3 = st.session_state.get("iso_3", None)
+
+selected_region = (
+    df.loc[
+        df["alpha-3"] == selected_iso3,
+        "region_wb"
+    ]
+    .dropna()
+    .iloc[0]
+)
+
+
+# ---------------------------------------------------------
+# Filter to countries in selected country's region
+# ---------------------------------------------------------
+
+country_region_df = df[
+    (df["region_wb"] == selected_region)
+    & (
+        df["Inventory"].isin([
+            "Int. Arr. Inventory",
+            "Int. Dep. Inventory"
+        ])
+    )
+].copy()
+
+
+# ---------------------------------------------------------
+# Calculate each country's % in port
+# ---------------------------------------------------------
+
+country_region_df["Port %"] = (
+    country_region_df[port_col]
+    / country_region_df[total_col]
+    * 100
+)
+
+
+# ---------------------------------------------------------
+# Split arrivals and departures
+# ---------------------------------------------------------
+
+arrivals = country_region_df[
+    country_region_df["Inventory"] == "Int. Arr. Inventory"
+].copy()
+
+departures = country_region_df[
+    country_region_df["Inventory"] == "Int. Dep. Inventory"
+].copy()
+
+
+# ---------------------------------------------------------
+# Colours
+# ---------------------------------------------------------
+
+arrivals["Colour"] = arrivals["alpha-3"].apply(
+    lambda x: "#1565C0" if x == selected_iso3 else "#90CAF9"
+)
+
+departures["Colour"] = departures["alpha-3"].apply(
+    lambda x: "#C62828" if x == selected_iso3 else "#EF9A9A"
+)
+
+
+# ---------------------------------------------------------
+# Hover labels
+# ---------------------------------------------------------
+
+if metric == "GHG emissions (t CO2e)":
+    port_hover_label = "In Port (t CO2e)"
+    total_hover_label = "Total (t CO2e)"
+
+else:
+    port_hover_label = "In Port (TJ)"
+    total_hover_label = "Total (TJ)"
+
+
+# ---------------------------------------------------------
+# Create figure
+# ---------------------------------------------------------
+
+fig_country_region = go.Figure()
+
+
+# International Arrivals
+fig_country_region.add_trace(
+    go.Bar(
+        x=arrivals["alpha-3"],
+        y=arrivals["Port %"],
+
+        name="International Arrivals",
+
+        marker_color=arrivals["Colour"],
+
+        customdata=arrivals[
+            [port_col, total_col]
+        ],
+
+        hovertemplate=(
+            "<b>%{x}</b><br>"
+            "International Arrivals<br><br>"
+            "In Port: %{y:.1f}%<br>"
+            f"{port_hover_label}: %{{customdata[0]:,.2f}}<br>"
+            f"{total_hover_label}: %{{customdata[1]:,.2f}}"
+            "<extra></extra>"
+        )
+    )
+)
+
+
+# International Departures
+fig_country_region.add_trace(
+    go.Bar(
+        x=departures["alpha-3"],
+        y=departures["Port %"],
+
+        name="International Departures",
+
+        marker_color=departures["Colour"],
+
+        customdata=departures[
+            [port_col, total_col]
+        ],
+
+        hovertemplate=(
+            "<b>%{x}</b><br>"
+            "International Departures<br><br>"
+            "In Port: %{y:.1f}%<br>"
+            f"{port_hover_label}: %{{customdata[0]:,.2f}}<br>"
+            f"{total_hover_label}: %{{customdata[1]:,.2f}}"
+            "<extra></extra>"
+        )
+    )
+)
+
+
+# ---------------------------------------------------------
+# Layout
+# ---------------------------------------------------------
+
+fig_country_region.update_layout(
+
+    barmode="group",
+
+    xaxis=dict(
+        title=None
+    ),
+
+    yaxis=dict(
+        title="In Port (%)",
+        ticksuffix="%",
+        range=[0, 100]
+    ),
+
+    legend=dict(
+        orientation="h",
+        yanchor="top",
+        y=-0.20,
+        xanchor="center",
+        x=0.5
+    ),
+
+    margin=dict(
+        l=20,
+        r=20,
+        t=40,
+        b=100
+    ),
+
+    hovermode="closest"
+)
+
+
+st.subheader(f"Countries in {selected_region}")
+
+st.plotly_chart(
+    fig_country_region,
+    use_container_width=True
+)
