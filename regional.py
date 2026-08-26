@@ -97,6 +97,19 @@ def create_group_chart(data, group_col):
         * 100
     )
 
+    # -----------------------------------------------------
+    # Sort groups by combined arrivals + departures total
+    # -----------------------------------------------------
+
+    group_order = (
+        grouped
+        .groupby(group_col)[total_col]
+        .sum()
+        .sort_values(ascending=False)
+        .index
+        .tolist()
+    )
+
     arrivals = grouped[
         grouped["Inventory"] == "Int. Arr. Inventory"
     ].copy()
@@ -105,6 +118,22 @@ def create_group_chart(data, group_col):
         grouped["Inventory"] == "Int. Dep. Inventory"
     ].copy()
 
+
+    # -----------------------------------------------------
+    # Hover labels depending on metric
+    # -----------------------------------------------------
+
+    if metric == "GHG emissions (t CO2e)":
+        voyage_hover_label = "In Voyage (t CO2e)"
+        port_hover_label = "In Port (t CO2e)"
+        total_hover_label = "Total (t CO2e)"
+
+    else:
+        voyage_hover_label = "In Voyage (TJ)"
+        port_hover_label = "In Port (TJ)"
+        total_hover_label = "Total (TJ)"
+
+
     fig = go.Figure()
 
 
@@ -112,37 +141,7 @@ def create_group_chart(data, group_col):
     # ARRIVALS
     # =====================================================
 
-    # In Port - darker blue
-    fig.add_trace(
-        go.Bar(
-            y=arrivals[group_col],
-            x=arrivals[port_col],
-
-            name="Arrivals — In Port",
-
-            orientation="h",
-            offsetgroup="arrivals",
-            legendgroup="arrivals",
-
-            marker_color="#1565C0",
-
-            customdata=arrivals[
-                ["Port %", total_col]
-            ],
-
-            hovertemplate=(
-                "<b>%{y}</b><br>"
-                "International Arrivals<br>"
-                "In Port<br><br>"
-                f"{value_title}: %{{x:,.2f}}<br>"
-                "Percentage: %{customdata[0]:.1f}%<br>"
-                f"Total: %{{customdata[1]:,.2f}}"
-                "<extra></extra>"
-            )
-        )
-    )
-
-    # In Voyage - lighter blue
+    # In Voyage FIRST - lighter blue
     fig.add_trace(
         go.Bar(
             y=arrivals[group_col],
@@ -162,11 +161,39 @@ def create_group_chart(data, group_col):
 
             hovertemplate=(
                 "<b>%{y}</b><br>"
-                "International Arrivals<br>"
-                "In Voyage<br><br>"
-                f"{value_title}: %{{x:,.2f}}<br>"
+                "International Arrivals<br><br>"
+                f"{voyage_hover_label}: %{{x:,.2f}}<br>"
                 "Percentage: %{customdata[0]:.1f}%<br>"
-                f"Total: %{{customdata[1]:,.2f}}"
+                f"{total_hover_label}: %{{customdata[1]:,.2f}}"
+                "<extra></extra>"
+            )
+        )
+    )
+
+    # In Port SECOND - darker blue
+    fig.add_trace(
+        go.Bar(
+            y=arrivals[group_col],
+            x=arrivals[port_col],
+
+            name="Arrivals — In Port",
+
+            orientation="h",
+            offsetgroup="arrivals",
+            legendgroup="arrivals",
+
+            marker_color="#1565C0",
+
+            customdata=arrivals[
+                ["Port %", total_col]
+            ],
+
+            hovertemplate=(
+                "<b>%{y}</b><br>"
+                "International Arrivals<br><br>"
+                f"{port_hover_label}: %{{x:,.2f}}<br>"
+                "Percentage: %{customdata[0]:.1f}%<br>"
+                f"{total_hover_label}: %{{customdata[1]:,.2f}}"
                 "<extra></extra>"
             )
         )
@@ -177,37 +204,7 @@ def create_group_chart(data, group_col):
     # DEPARTURES
     # =====================================================
 
-    # In Port - darker red
-    fig.add_trace(
-        go.Bar(
-            y=departures[group_col],
-            x=departures[port_col],
-
-            name="Departures — In Port",
-
-            orientation="h",
-            offsetgroup="departures",
-            legendgroup="departures",
-
-            marker_color="#C62828",
-
-            customdata=departures[
-                ["Port %", total_col]
-            ],
-
-            hovertemplate=(
-                "<b>%{y}</b><br>"
-                "International Departures<br>"
-                "In Port<br><br>"
-                f"{value_title}: %{{x:,.2f}}<br>"
-                "Percentage: %{customdata[0]:.1f}%<br>"
-                f"Total: %{{customdata[1]:,.2f}}"
-                "<extra></extra>"
-            )
-        )
-    )
-
-    # In Voyage - lighter red
+    # In Voyage FIRST - lighter red
     fig.add_trace(
         go.Bar(
             y=departures[group_col],
@@ -227,11 +224,39 @@ def create_group_chart(data, group_col):
 
             hovertemplate=(
                 "<b>%{y}</b><br>"
-                "International Departures<br>"
-                "In Voyage<br><br>"
-                f"{value_title}: %{{x:,.2f}}<br>"
+                "International Departures<br><br>"
+                f"{voyage_hover_label}: %{{x:,.2f}}<br>"
                 "Percentage: %{customdata[0]:.1f}%<br>"
-                f"Total: %{{customdata[1]:,.2f}}"
+                f"{total_hover_label}: %{{customdata[1]:,.2f}}"
+                "<extra></extra>"
+            )
+        )
+    )
+
+    # In Port SECOND - darker red
+    fig.add_trace(
+        go.Bar(
+            y=departures[group_col],
+            x=departures[port_col],
+
+            name="Departures — In Port",
+
+            orientation="h",
+            offsetgroup="departures",
+            legendgroup="departures",
+
+            marker_color="#C62828",
+
+            customdata=departures[
+                ["Port %", total_col]
+            ],
+
+            hovertemplate=(
+                "<b>%{y}</b><br>"
+                "International Departures<br><br>"
+                f"{port_hover_label}: %{{x:,.2f}}<br>"
+                "Percentage: %{customdata[0]:.1f}%<br>"
+                f"{total_hover_label}: %{{customdata[1]:,.2f}}"
                 "<extra></extra>"
             )
         )
@@ -252,7 +277,13 @@ def create_group_chart(data, group_col):
         ),
 
         yaxis=dict(
-            title=None
+            title=None,
+            categoryorder="array",
+            categoryarray=group_order,
+
+            # Horizontal Plotly bars put the first category
+            # at the bottom, so reverse to put largest on top
+            autorange="reversed"
         ),
 
         legend=dict(
@@ -261,7 +292,6 @@ def create_group_chart(data, group_col):
             y=-0.22,
             xanchor="center",
             x=0.5,
-
             entrywidth=180,
             entrywidthmode="pixels"
         ),
