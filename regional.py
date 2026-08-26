@@ -596,10 +596,8 @@ def create_region_swarm(data, inventory_name):
         data["Inventory"] == inventory_name
     ].copy()
 
-
     # -----------------------------------------------------
     # Region order
-    # Order by median Port %
     # -----------------------------------------------------
 
     region_order = (
@@ -611,9 +609,33 @@ def create_region_swarm(data, inventory_name):
         .tolist()
     )
 
+    # Numeric x position for each region
+    region_positions = {
+        region: i
+        for i, region in enumerate(region_order)
+    }
+
+    # Base x-position for each country
+    panel_data["x_base"] = panel_data["region_wb"].map(
+        region_positions
+    )
+
+    # -----------------------------------------------------
+    # Add reproducible jitter
+    # -----------------------------------------------------
+
+    rng = np.random.default_rng(42)
+
+    panel_data["x_jitter"] = (
+        panel_data["x_base"]
+        + rng.uniform(
+            -0.18,
+            0.18,
+            size=len(panel_data)
+        )
+    )
 
     fig = go.Figure()
-
 
     # -----------------------------------------------------
     # Box plots
@@ -625,12 +647,14 @@ def create_region_swarm(data, inventory_name):
             panel_data["region_wb"] == region
         ]
 
+        x_position = region_positions[region]
+
         fig.add_trace(
             go.Box(
-                x=[region] * len(region_data),
+                x=[x_position] * len(region_data),
                 y=region_data["Port %"],
 
-                name=region,
+                width=0.45,
 
                 boxpoints=False,
 
@@ -642,11 +666,9 @@ def create_region_swarm(data, inventory_name):
                 fillcolor="rgba(0,0,0,0)",
 
                 showlegend=False,
-
                 hoverinfo="skip"
             )
         )
-
 
     # -----------------------------------------------------
     # Normal countries
@@ -658,7 +680,7 @@ def create_region_swarm(data, inventory_name):
 
     fig.add_trace(
         go.Scatter(
-            x=normal["region_wb"],
+            x=normal["x_jitter"],
             y=normal["Port %"],
 
             mode="markers",
@@ -674,6 +696,7 @@ def create_region_swarm(data, inventory_name):
             customdata=normal[
                 [
                     "alpha-3",
+                    "region_wb",
                     port_col,
                     total_col
                 ]
@@ -681,17 +704,16 @@ def create_region_swarm(data, inventory_name):
 
             hovertemplate=(
                 "<b>%{customdata[0]}</b><br>"
-                "%{x}<br><br>"
+                "%{customdata[1]}<br><br>"
                 "In Port: %{y:.1f}%<br>"
                 f"{port_hover_label}: "
-                "%{customdata[1]:,.2f}<br>"
+                "%{customdata[2]:,.2f}<br>"
                 f"{total_hover_label}: "
-                "%{customdata[2]:,.2f}"
+                "%{customdata[3]:,.2f}"
                 "<extra></extra>"
             )
         )
     )
-
 
     # -----------------------------------------------------
     # Selected country
@@ -705,7 +727,7 @@ def create_region_swarm(data, inventory_name):
 
         fig.add_trace(
             go.Scatter(
-                x=selected["region_wb"],
+                x=selected["x_jitter"],
                 y=selected["Port %"],
 
                 mode="markers",
@@ -724,6 +746,7 @@ def create_region_swarm(data, inventory_name):
                 customdata=selected[
                     [
                         "alpha-3",
+                        "region_wb",
                         port_col,
                         total_col
                     ]
@@ -731,17 +754,16 @@ def create_region_swarm(data, inventory_name):
 
                 hovertemplate=(
                     "<b>%{customdata[0]}</b><br>"
-                    "%{x}<br><br>"
+                    "%{customdata[1]}<br><br>"
                     "In Port: %{y:.1f}%<br>"
                     f"{port_hover_label}: "
-                    "%{customdata[1]:,.2f}<br>"
+                    "%{customdata[2]:,.2f}<br>"
                     f"{total_hover_label}: "
-                    "%{customdata[2]:,.2f}"
+                    "%{customdata[3]:,.2f}"
                     "<extra></extra>"
                 )
             )
         )
-
 
     # -----------------------------------------------------
     # Layout
@@ -751,8 +773,21 @@ def create_region_swarm(data, inventory_name):
 
         xaxis=dict(
             title=None,
-            categoryorder="array",
-            categoryarray=region_order
+
+            tickmode="array",
+
+            tickvals=list(
+                region_positions.values()
+            ),
+
+            ticktext=list(
+                region_positions.keys()
+            ),
+
+            range=[
+                -0.5,
+                len(region_order) - 0.5
+            ]
         ),
 
         yaxis=dict(
@@ -764,7 +799,7 @@ def create_region_swarm(data, inventory_name):
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=-0.22,
+            y=-0.25,
             xanchor="center",
             x=0.5
         ),
@@ -773,7 +808,7 @@ def create_region_swarm(data, inventory_name):
             l=20,
             r=20,
             t=20,
-            b=100
+            b=120
         ),
 
         hovermode="closest"
