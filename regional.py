@@ -338,7 +338,7 @@ with col2:
     )
 
 st.subheader(
-    "A Closer Look at {0} in the Global Context".format(
+    "A Closer Look at {0} in the Regional Context".format(
         st.session_state.iso_country),
     divider = 'grey')
 
@@ -422,6 +422,14 @@ else:
     port_hover_label = "In Port (TJ)"
     total_hover_label = "Total (TJ)"
 
+country_order = (
+    country_region_df
+    .groupby("alpha-3")["Port %"]
+    .mean()
+    .sort_values(ascending=True)
+    .index
+    .tolist()
+)
 
 # ---------------------------------------------------------
 # Create figure
@@ -491,7 +499,9 @@ fig_country_region.update_layout(
     barmode="group",
 
     xaxis=dict(
-        title=None
+    title=None,
+    categoryorder="array",
+    categoryarray=country_order
     ),
 
     yaxis=dict(
