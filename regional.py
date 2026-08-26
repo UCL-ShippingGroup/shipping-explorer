@@ -1046,3 +1046,488 @@ st.plotly_chart(
     fig_departures,
     use_container_width=True
 )
+
+# =========================================================
+# DEVELOPMENT STATUS SWARM + BOX PLOT
+# =========================================================
+
+
+# ---------------------------------------------------------
+# Prepare data
+# ---------------------------------------------------------
+
+status_df = df[
+    df["Inventory"].isin([
+        "Int. Arr. Inventory",
+        "Int. Dep. Inventory"
+    ])
+].copy()
+
+
+# Remove rows with missing status / invalid totals
+status_df = status_df[
+    status_df["status"].notna()
+    & status_df[total_col].notna()
+    & (status_df[total_col] > 0)
+    & status_df[port_col].notna()
+].copy()
+
+
+# ---------------------------------------------------------
+# Calculate Port % for each inventory
+# ---------------------------------------------------------
+
+status_df["Port %"] = (
+    status_df[port_col]
+    / status_df[total_col]
+    * 100
+)
+
+
+# ---------------------------------------------------------
+# Give inventories shorter names
+# ---------------------------------------------------------
+
+status_df["Inventory Type"] = (
+    status_df["Inventory"]
+    .map({
+        "Int. Arr. Inventory": "Arrivals",
+        "Int. Dep. Inventory": "Departures"
+    })
+)
+
+
+# =========================================================
+# CREATE ONE ROW PER COUNTRY
+# =========================================================
+
+# ---------------------------------------------------------
+# Percentage data
+# ---------------------------------------------------------
+
+percentage_df = (
+    status_df
+    .pivot_table(
+        index=[
+            "alpha-3",
+            "status"
+        ],
+        columns="Inventory Type",
+        values="Port %",
+        aggfunc="first"
+    )
+    .reset_index()
+)
+
+
+# Require both arrivals and departures
+percentage_df = percentage_df.dropna(
+    subset=[
+        "Arrivals",
+        "Departures"
+    ]
+)
+
+
+# ---------------------------------------------------------
+# Average arrivals and departures Port %
+# ---------------------------------------------------------
+
+percentage_df["Average Port %"] = (
+    percentage_df[
+        [
+            "Arrivals",
+            "Departures"
+        ]
+    ]
+    .mean(axis=1)
+)
+
+
+# =========================================================
+# ADD ABSOLUTE VALUES FOR HOVER
+# =========================================================
+
+# ---------------------------------------------------------
+# Arrivals absolute values
+# ---------------------------------------------------------
+
+arrivals_abs = (
+    status_df[
+        status_df["Inventory"]
+        == "Int. Arr. Inventory"
+    ]
+    [
+        [
+            "alpha-3",
+            total_col,
+            port_col
+        ]
+    ]
+    .copy()
+)
+
+
+arrivals_abs = arrivals_abs.rename(
+    columns={
+        total_col: "Arrivals Total",
+        port_col: "Arrivals Port"
+    }
+)
+
+
+# ---------------------------------------------------------
+# Departures absolute values
+# ---------------------------------------------------------
+
+departures_abs = (
+    status_df[
+        status_df["Inventory"]
+        == "Int. Dep. Inventory"
+    ]
+    [
+        [
+            "alpha-3",
+            total_col,
+            port_col
+        ]
+    ]
+    .copy()
+)
+
+
+departures_abs = departures_abs.rename(
+    columns={
+        total_col: "Departures Total",
+        port_col: "Departures Port"
+    }
+)
+
+
+# ---------------------------------------------------------
+# Merge absolute values onto country-level data
+# ---------------------------------------------------------
+
+plot_status_df = (
+    percentage_df
+
+    .merge(
+        arrivals_abs,
+        on="alpha-3",
+        how="left"
+    )
+
+    .merge(
+        departures_abs,
+        on="alpha-3",
+        how="left"
+    )
+)
+
+
+# =========================================================
+# CREATE FIGURE
+# =========================================================
+
+fig_status_swarm = go.Figure()
+
+
+# ---------------------------------------------------------
+# Order status groups by median
+# Lowest median on left -> highest on right
+# ---------------------------------------------------------
+
+status_order = (
+    plot_status_df
+    .groupby("status")["Average Port %"]
+    .median()
+    .sort_values(
+        ascending=True
+    )
+    .index
+    .tolist()
+)
+
+
+# ---------------------------------------------------------
+# Numeric x positions
+# ---------------------------------------------------------
+
+status_positions = {
+    status: i
+    for i, status in enumerate(
+        status_order
+    )
+}
+
+
+# =========================================================
+# LEGEND
+# =========================================================
+
+# Dummy trace so Countries appears once in legend
+
+fig_status_swarm.add_trace(
+    go.Scatter(
+        x=[None],
+        y=[None],
+
+        mode="markers",
+
+        name="Countries",
+
+        marker=dict(
+            size=7,
+            color="blue",
+            opacity=0.65
+        ),
+
+        showlegend=True,
+
+        hoverinfo="skip"
+    )
+)
+
+
+# =========================================================
+# LOOP THROUGH DEVELOPMENT STATUS GROUPS
+# =========================================================
+
+for status in status_order:
+
+    subset = plot_status_df[
+        plot_status_df["status"] == status
+    ].copy()
+
+    position = status_positions[
+        status
+    ]
+
+
+    # -----------------------------------------------------
+    # Jitter
+    # -----------------------------------------------------
+
+    np.random.seed(
+        42 + position
+    )
+
+    jitter = np.random.uniform(
+        -0.15,
+        0.15,
+        size=len(subset)
+    )
+
+    x_values = (
+        position
+        + jitter
+    )
+
+
+    # -----------------------------------------------------
+    # Mean for boxplot hover
+    # -----------------------------------------------------
+
+    mean_value = (
+        subset["Average Port %"]
+        .mean()
+    )
+
+
+    # =====================================================
+    # BOX PLOT
+    # =====================================================
+
+    fig_status_swarm.add_trace(
+        go.Box(
+
+            x=[
+                position
+            ] * len(subset),
+
+            y=subset[
+                "Average Port %"
+            ],
+
+            name=status,
+
+            boxpoints=False,
+
+            width=0.5,
+
+            showlegend=False,
+
+            # Display mean visually
+            boxmean=True,
+
+            hovertemplate=(
+                "<b>"
+                + status
+                + "</b><br>"
+                "Maximum: %{upper:.2f}%<br>"
+                "Q3 (75%): %{q3:.2f}%<br>"
+                "Median: %{median:.2f}%<br>"
+                "Mean: "
+                + f"{mean_value:.2f}%"
+                + "<br>"
+                "Q1 (25%): %{q1:.2f}%<br>"
+                "Minimum: %{lower:.2f}%<br>"
+                "Countries: "
+                + str(len(subset))
+                + "<extra></extra>"
+            )
+        )
+    )
+
+
+    # =====================================================
+    # COUNTRY DOTS
+    # =====================================================
+
+    customdata = np.column_stack([
+        subset["alpha-3"],
+
+        subset["Arrivals"],
+        subset["Departures"],
+
+        subset["Arrivals Port"],
+        subset["Arrivals Total"],
+
+        subset["Departures Port"],
+        subset["Departures Total"]
+    ])
+
+
+    fig_status_swarm.add_trace(
+        go.Scatter(
+
+            x=x_values,
+
+            y=subset[
+                "Average Port %"
+            ],
+
+            mode="markers",
+
+            name="Countries",
+
+            showlegend=False,
+
+            marker=dict(
+                size=7,
+                color="blue",
+                opacity=0.65
+            ),
+
+            customdata=customdata,
+
+            hovertemplate=(
+                "<b>%{customdata[0]}</b><br>"
+                + status
+                + "<br><br>"
+
+                "Average In Port: %{y:.2f}%"
+                "<br><br>"
+
+                "<b>International Arrivals</b><br>"
+                "In Port: %{customdata[1]:.2f}%<br>"
+                "In Port ("
+                + unit
+                + "): %{customdata[3]:,.2f}<br>"
+                "Total ("
+                + unit
+                + "): %{customdata[4]:,.2f}"
+                "<br><br>"
+
+                "<b>International Departures</b><br>"
+                "In Port: %{customdata[2]:.2f}%<br>"
+                "In Port ("
+                + unit
+                + "): %{customdata[5]:,.2f}<br>"
+                "Total ("
+                + unit
+                + "): %{customdata[6]:,.2f}"
+
+                "<extra></extra>"
+            )
+        )
+    )
+
+
+# =========================================================
+# LAYOUT
+# =========================================================
+
+fig_status_swarm.update_layout(
+
+    height=600,
+
+    template="plotly_white",
+
+    hovermode="closest",
+
+    hoverdistance=5,
+
+    margin=dict(
+        l=70,
+        r=30,
+        t=40,
+        b=110
+    ),
+
+    xaxis=dict(
+
+        tickmode="array",
+
+        tickvals=list(
+            status_positions.values()
+        ),
+
+        ticktext=list(
+            status_positions.keys()
+        ),
+
+        range=[
+            -0.5,
+            len(status_order) - 0.5
+        ],
+
+        title=None
+    ),
+
+    yaxis=dict(
+
+        title="Average percentage of country's total in port",
+
+        ticksuffix="%",
+
+        range=[
+            0,
+            100
+        ]
+    ),
+
+    legend=dict(
+        orientation="h",
+
+        yanchor="top",
+        y=-0.18,
+
+        xanchor="center",
+        x=0.5
+    )
+)
+
+
+# =========================================================
+# DISPLAY
+# =========================================================
+
+st.subheader(
+    "By development status"
+)
+
+st.plotly_chart(
+    fig_status_swarm,
+    use_container_width=True
+)
