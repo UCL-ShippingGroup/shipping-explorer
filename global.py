@@ -452,7 +452,7 @@ fig = px.choropleth(
 
     hover_name="alpha-3",
 
-    color_continuous_scale="RdYlGn_r",
+    color_continuous_scale="Reds",
 
     labels={
         "map_percentage": "%"
@@ -499,6 +499,7 @@ fig.update_geos(
     fitbounds="locations"
 )
 
+#RdYlGn_r
 
 # ============================================================
 # DISPLAY
