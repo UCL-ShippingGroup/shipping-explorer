@@ -80,12 +80,12 @@ with c1:
     st.markdown(
         """
         The Global Overview is designed to give countries the opportunity to understand and bench mark their GHG Emissions/Energy Demands 
-        against other nations as well as Global averages. To the right, headline statitstics GHG Emissfor International Voyages are provided   / 
-        global averages and /
-        th
+        against other nations as well as Global averages. 
+        
+        
         """
     )
-
+ #To the right, headline statistics for global GHG Emissions/Energy Demand 
 
 # ============================================================
 # MIDDLE — GHG EMISSIONS
