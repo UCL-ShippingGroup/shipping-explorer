@@ -536,11 +536,6 @@ st.plotly_chart(
     use_container_width=True
 )
 
-import streamlit as st
-import pandas as pd
-import numpy as np
-import plotly.graph_objects as go
-
 
 # =========================================================
 # METRIC CONTROL
