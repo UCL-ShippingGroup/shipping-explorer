@@ -536,9 +536,46 @@ st.plotly_chart(
     use_container_width=True
 )
 
+
+# =========================================================
+# METRIC CONTROL
+# =========================================================
+
+metric = st.segmented_control(
+    "Metric",
+    options=[
+        "GHG emissions (t CO2e)",
+        "Energy Demand (TJ)"
+    ],
+    default="GHG emissions (t CO2e)",
+    key="region_swarm_metric"
+)
+
+
 # ---------------------------------------------------------
-# Selected country
+# Select relevant columns
 # ---------------------------------------------------------
+
+if metric == "GHG emissions (t CO2e)":
+
+    total_col = "co2e_t"
+    port_col = "co2e_t_stop"
+
+    port_hover_label = "In Port (t CO2e)"
+    total_hover_label = "Total (t CO2e)"
+
+else:
+
+    total_col = "ene_tj"
+    port_col = "ene_tj_stop"
+
+    port_hover_label = "In Port (TJ)"
+    total_hover_label = "Total (TJ)"
+
+
+# =========================================================
+# SELECTED COUNTRY
+# =========================================================
 
 selected_iso3 = st.session_state.get(
     "iso_3",
@@ -546,9 +583,9 @@ selected_iso3 = st.session_state.get(
 )
 
 
-# ---------------------------------------------------------
-# Prepare data
-# ---------------------------------------------------------
+# =========================================================
+# PREPARE DATA
+# =========================================================
 
 swarm_df = df[
     df["Inventory"].isin([
@@ -557,11 +594,14 @@ swarm_df = df[
     ])
 ].copy()
 
-# Remove missing regions / invalid totals
+
+# Remove rows with missing regions, missing totals,
+# or zero totals
 swarm_df = swarm_df[
     swarm_df["region_wb"].notna()
     & swarm_df[total_col].notna()
     & (swarm_df[total_col] > 0)
+    & swarm_df[port_col].notna()
 ].copy()
 
 
@@ -576,52 +616,61 @@ swarm_df["Port %"] = (
 )
 
 
-# ---------------------------------------------------------
-# Hover labels
-# ---------------------------------------------------------
-
-if metric == "GHG emissions (t CO2e)":
-
-    port_hover_label = "In Port (t CO2e)"
-    total_hover_label = "Total (t CO2e)"
-
-else:
-
-    port_hover_label = "In Port (TJ)"
-    total_hover_label = "Total (TJ)"
+# =========================================================
+# FUNCTION TO CREATE SWARM + BOX PLOT
+# =========================================================
 
 def create_region_swarm(data, inventory_name):
+
+    # -----------------------------------------------------
+    # Filter to Arrivals or Departures
+    # -----------------------------------------------------
 
     panel_data = data[
         data["Inventory"] == inventory_name
     ].copy()
 
+
     # -----------------------------------------------------
     # Region order
+    #
+    # Currently ordered from lowest median Port %
+    # to highest median Port %
     # -----------------------------------------------------
 
     region_order = (
         panel_data
         .groupby("region_wb")["Port %"]
         .median()
-        .sort_values()
+        .sort_values(ascending=True)
         .index
         .tolist()
     )
 
-    # Numeric x position for each region
+
+    # -----------------------------------------------------
+    # Give each region a numeric x position
+    #
+    # e.g.
+    # Region A = 0
+    # Region B = 1
+    # Region C = 2
+    # -----------------------------------------------------
+
     region_positions = {
         region: i
         for i, region in enumerate(region_order)
     }
 
-    # Base x-position for each country
-    panel_data["x_base"] = panel_data["region_wb"].map(
-        region_positions
+
+    panel_data["x_base"] = (
+        panel_data["region_wb"]
+        .map(region_positions)
     )
 
+
     # -----------------------------------------------------
-    # Add reproducible jitter
+    # Add reproducible horizontal jitter
     # -----------------------------------------------------
 
     rng = np.random.default_rng(42)
@@ -635,52 +684,172 @@ def create_region_swarm(data, inventory_name):
         )
     )
 
+
+    # =====================================================
+    # CREATE FIGURE
+    # =====================================================
+
     fig = go.Figure()
 
-    # -----------------------------------------------------
-    # Box plots
-    # -----------------------------------------------------
+
+    # =====================================================
+    # BOX PLOTS
+    # =====================================================
 
     for region in region_order:
 
         region_data = panel_data[
             panel_data["region_wb"] == region
-        ]
+        ].copy()
+
+        values = region_data["Port %"].dropna()
+
+        if values.empty:
+            continue
+
+
+        # -------------------------------------------------
+        # Calculate box statistics
+        # -------------------------------------------------
+
+        mean_value = values.mean()
+
+        median_value = values.median()
+
+        q1_value = values.quantile(0.25)
+
+        q3_value = values.quantile(0.75)
+
+        min_value = values.min()
+
+        max_value = values.max()
+
+        n_countries = len(values)
+
 
         x_position = region_positions[region]
 
+
+        # -------------------------------------------------
+        # Box plot
+        # -------------------------------------------------
+
+        box_customdata = np.column_stack([
+            np.repeat(region, len(region_data)),
+            np.repeat(n_countries, len(region_data)),
+            np.repeat(mean_value, len(region_data)),
+            np.repeat(median_value, len(region_data)),
+            np.repeat(q1_value, len(region_data)),
+            np.repeat(q3_value, len(region_data)),
+            np.repeat(min_value, len(region_data)),
+            np.repeat(max_value, len(region_data))
+        ])
+
+
         fig.add_trace(
             go.Box(
+
                 x=[x_position] * len(region_data),
+
                 y=region_data["Port %"],
 
-                width=0.45,
+                width=0.42,
 
                 boxpoints=False,
 
+                # Don't use Plotly's automatic mean because
+                # we add our own mean marker below
+                boxmean=False,
+
                 line=dict(
-                    color="#808080",
+                    color="#707070",
                     width=1.5
                 ),
 
-                fillcolor="rgba(0,0,0,0)",
+                fillcolor="rgba(160,160,160,0.15)",
 
                 showlegend=False,
-                hoverinfo="skip"
+
+                name=region,
+
+                customdata=box_customdata,
+
+                hovertemplate=(
+                    "<b>%{customdata[0]}</b>"
+                    "<br><br>"
+                    "Countries: %{customdata[1]}"
+                    "<br>"
+                    "Mean: %{customdata[2]:.1f}%"
+                    "<br>"
+                    "Median: %{customdata[3]:.1f}%"
+                    "<br>"
+                    "Q1: %{customdata[4]:.1f}%"
+                    "<br>"
+                    "Q3: %{customdata[5]:.1f}%"
+                    "<br>"
+                    "Minimum: %{customdata[6]:.1f}%"
+                    "<br>"
+                    "Maximum: %{customdata[7]:.1f}%"
+                    "<extra></extra>"
+                )
             )
         )
 
-    # -----------------------------------------------------
-    # Normal countries
-    # -----------------------------------------------------
+
+        # -------------------------------------------------
+        # Mean marker
+        # -------------------------------------------------
+
+        fig.add_trace(
+            go.Scatter(
+
+                x=[x_position],
+
+                y=[mean_value],
+
+                mode="markers",
+
+                marker=dict(
+                    symbol="diamond",
+                    size=9,
+                    color="#404040",
+                    line=dict(
+                        color="white",
+                        width=1
+                    )
+                ),
+
+                showlegend=False,
+
+                customdata=[[
+                    region,
+                    mean_value
+                ]],
+
+                hovertemplate=(
+                    "<b>%{customdata[0]}</b>"
+                    "<br>"
+                    "Mean: %{customdata[1]:.1f}%"
+                    "<extra></extra>"
+                )
+            )
+        )
+
+
+    # =====================================================
+    # NORMAL COUNTRIES
+    # =====================================================
 
     normal = panel_data[
         panel_data["alpha-3"] != selected_iso3
     ].copy()
 
+
     fig.add_trace(
         go.Scatter(
+
             x=normal["x_jitter"],
+
             y=normal["Port %"],
 
             mode="markers",
@@ -690,7 +859,7 @@ def create_region_swarm(data, inventory_name):
             marker=dict(
                 color="#1565C0",
                 size=7,
-                opacity=0.7
+                opacity=0.70
             ),
 
             customdata=normal[
@@ -703,11 +872,15 @@ def create_region_swarm(data, inventory_name):
             ],
 
             hovertemplate=(
-                "<b>%{customdata[0]}</b><br>"
-                "%{customdata[1]}<br><br>"
-                "In Port: %{y:.1f}%<br>"
+                "<b>%{customdata[0]}</b>"
+                "<br>"
+                "%{customdata[1]}"
+                "<br><br>"
+                "In Port: %{y:.1f}%"
+                "<br>"
                 f"{port_hover_label}: "
-                "%{customdata[2]:,.2f}<br>"
+                "%{customdata[2]:,.2f}"
+                "<br>"
                 f"{total_hover_label}: "
                 "%{customdata[3]:,.2f}"
                 "<extra></extra>"
@@ -715,19 +888,23 @@ def create_region_swarm(data, inventory_name):
         )
     )
 
-    # -----------------------------------------------------
-    # Selected country
-    # -----------------------------------------------------
+
+    # =====================================================
+    # SELECTED COUNTRY
+    # =====================================================
 
     selected = panel_data[
         panel_data["alpha-3"] == selected_iso3
     ].copy()
 
+
     if not selected.empty:
 
         fig.add_trace(
             go.Scatter(
+
                 x=selected["x_jitter"],
+
                 y=selected["Port %"],
 
                 mode="markers",
@@ -736,10 +913,12 @@ def create_region_swarm(data, inventory_name):
 
                 marker=dict(
                     color="#FFD600",
-                    size=12,
+                    size=13,
+                    opacity=1,
+
                     line=dict(
                         color="#333333",
-                        width=1
+                        width=1.5
                     )
                 ),
 
@@ -753,11 +932,15 @@ def create_region_swarm(data, inventory_name):
                 ],
 
                 hovertemplate=(
-                    "<b>%{customdata[0]}</b><br>"
-                    "%{customdata[1]}<br><br>"
-                    "In Port: %{y:.1f}%<br>"
+                    "<b>%{customdata[0]}</b>"
+                    "<br>"
+                    "%{customdata[1]}"
+                    "<br><br>"
+                    "In Port: %{y:.1f}%"
+                    "<br>"
                     f"{port_hover_label}: "
-                    "%{customdata[2]:,.2f}<br>"
+                    "%{customdata[2]:,.2f}"
+                    "<br>"
                     f"{total_hover_label}: "
                     "%{customdata[3]:,.2f}"
                     "<extra></extra>"
@@ -765,13 +948,17 @@ def create_region_swarm(data, inventory_name):
             )
         )
 
-    # -----------------------------------------------------
-    # Layout
-    # -----------------------------------------------------
+
+    # =====================================================
+    # LAYOUT
+    # =====================================================
 
     fig.update_layout(
 
+        height=550,
+
         xaxis=dict(
+
             title=None,
 
             tickmode="array",
@@ -799,13 +986,13 @@ def create_region_swarm(data, inventory_name):
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=-0.25,
+            y=-0.18,
             xanchor="center",
             x=0.5
         ),
 
         margin=dict(
-            l=20,
+            l=50,
             r=20,
             t=20,
             b=120
@@ -814,36 +1001,43 @@ def create_region_swarm(data, inventory_name):
         hovermode="closest"
     )
 
+
     return fig
 
-col1, col2 = st.columns(2)
+
+# =========================================================
+# INTERNATIONAL ARRIVALS
+# =========================================================
+
+st.subheader(
+    "International arrivals"
+)
+
+fig_arrivals = create_region_swarm(
+    swarm_df,
+    "Int. Arr. Inventory"
+)
+
+st.plotly_chart(
+    fig_arrivals,
+    use_container_width=True
+)
 
 
-with col1:
+# =========================================================
+# INTERNATIONAL DEPARTURES
+# =========================================================
 
-    st.subheader("International arrivals")
+st.subheader(
+    "International departures"
+)
 
-    fig_arrivals = create_region_swarm(
-        swarm_df,
-        "Int. Arr. Inventory"
-    )
+fig_departures = create_region_swarm(
+    swarm_df,
+    "Int. Dep. Inventory"
+)
 
-    st.plotly_chart(
-        fig_arrivals,
-        use_container_width=True
-    )
-
-
-with col2:
-
-    st.subheader("International departures")
-
-    fig_departures = create_region_swarm(
-        swarm_df,
-        "Int. Dep. Inventory"
-    )
-
-    st.plotly_chart(
-        fig_departures,
-        use_container_width=True
-    )
+st.plotly_chart(
+    fig_departures,
+    use_container_width=True
+)
