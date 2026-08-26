@@ -529,7 +529,7 @@ fig_country_region.update_layout(
 )
 
 
-st.markdown(#### f"Percentage of Emissions/Energy Demand in Port for each Country in {selected_region}")
+st.markdown(f"#### Percentage of Emissions/Energy Demand in Port for each Country in {selected_region}")
 
 st.plotly_chart(
     fig_country_region,
