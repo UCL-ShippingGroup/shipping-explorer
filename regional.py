@@ -65,7 +65,10 @@ plot_df = df[
 
 def create_group_chart(data, group_col):
 
+    # -----------------------------------------------------
     # Aggregate country data
+    # -----------------------------------------------------
+
     grouped = (
         data
         .dropna(subset=[group_col])
@@ -78,7 +81,10 @@ def create_group_chart(data, group_col):
         .sum()
     )
 
+    # -----------------------------------------------------
     # Calculate percentages
+    # -----------------------------------------------------
+
     grouped["Voyage %"] = (
         grouped[voyage_col]
         / grouped[total_col]
@@ -101,137 +107,161 @@ def create_group_chart(data, group_col):
 
     fig = go.Figure()
 
+
     # =====================================================
     # ARRIVALS
     # =====================================================
 
+    # In Port - darker blue
     fig.add_trace(
         go.Bar(
-            x=arrivals[group_col],
-            y=arrivals["Voyage %"],
-            name="Arrivals — In Voyage",
+            y=arrivals[group_col],
+            x=arrivals[port_col],
+
+            name="Arrivals — In Port",
+
+            orientation="h",
             offsetgroup="arrivals",
             legendgroup="arrivals",
+
             marker_color="#1565C0",
 
             customdata=arrivals[
-                [voyage_col, total_col]
+                ["Port %", total_col]
             ],
 
             hovertemplate=(
-                "<b>%{x}</b><br>"
+                "<b>%{y}</b><br>"
                 "International Arrivals<br>"
-                "In Voyage<br><br>"
-                "Percentage: %{y:.1f}%<br>"
-                f"{value_title}: %{{customdata[0]:,.2f}}<br>"
+                "In Port<br><br>"
+                f"{value_title}: %{{x:,.2f}}<br>"
+                "Percentage: %{customdata[0]:.1f}%<br>"
                 f"Total: %{{customdata[1]:,.2f}}"
                 "<extra></extra>"
             )
         )
     )
 
+    # In Voyage - lighter blue
     fig.add_trace(
         go.Bar(
-            x=arrivals[group_col],
-            y=arrivals["Port %"],
-            name="Arrivals — In Port",
+            y=arrivals[group_col],
+            x=arrivals[voyage_col],
+
+            name="Arrivals — In Voyage",
+
+            orientation="h",
             offsetgroup="arrivals",
             legendgroup="arrivals",
+
             marker_color="#90CAF9",
 
             customdata=arrivals[
-                [port_col, total_col]
+                ["Voyage %", total_col]
             ],
 
             hovertemplate=(
-                "<b>%{x}</b><br>"
+                "<b>%{y}</b><br>"
                 "International Arrivals<br>"
-                "In Port<br><br>"
-                "Percentage: %{y:.1f}%<br>"
-                f"{value_title}: %{{customdata[0]:,.2f}}<br>"
+                "In Voyage<br><br>"
+                f"{value_title}: %{{x:,.2f}}<br>"
+                "Percentage: %{customdata[0]:.1f}%<br>"
                 f"Total: %{{customdata[1]:,.2f}}"
                 "<extra></extra>"
             )
         )
     )
+
 
     # =====================================================
     # DEPARTURES
     # =====================================================
 
+    # In Port - darker red
     fig.add_trace(
         go.Bar(
-            x=departures[group_col],
-            y=departures["Voyage %"],
-            name="Departures — In Voyage",
+            y=departures[group_col],
+            x=departures[port_col],
+
+            name="Departures — In Port",
+
+            orientation="h",
             offsetgroup="departures",
             legendgroup="departures",
+
             marker_color="#C62828",
 
             customdata=departures[
-                [voyage_col, total_col]
+                ["Port %", total_col]
             ],
 
             hovertemplate=(
-                "<b>%{x}</b><br>"
+                "<b>%{y}</b><br>"
                 "International Departures<br>"
-                "In Voyage<br><br>"
-                "Percentage: %{y:.1f}%<br>"
-                f"{value_title}: %{{customdata[0]:,.2f}}<br>"
+                "In Port<br><br>"
+                f"{value_title}: %{{x:,.2f}}<br>"
+                "Percentage: %{customdata[0]:.1f}%<br>"
                 f"Total: %{{customdata[1]:,.2f}}"
                 "<extra></extra>"
             )
         )
     )
 
+    # In Voyage - lighter red
     fig.add_trace(
         go.Bar(
-            x=departures[group_col],
-            y=departures["Port %"],
-            name="Departures — In Port",
+            y=departures[group_col],
+            x=departures[voyage_col],
+
+            name="Departures — In Voyage",
+
+            orientation="h",
             offsetgroup="departures",
             legendgroup="departures",
+
             marker_color="#EF9A9A",
 
             customdata=departures[
-                [port_col, total_col]
+                ["Voyage %", total_col]
             ],
 
             hovertemplate=(
-                "<b>%{x}</b><br>"
+                "<b>%{y}</b><br>"
                 "International Departures<br>"
-                "In Port<br><br>"
-                "Percentage: %{y:.1f}%<br>"
-                f"{value_title}: %{{customdata[0]:,.2f}}<br>"
+                "In Voyage<br><br>"
+                f"{value_title}: %{{x:,.2f}}<br>"
+                "Percentage: %{customdata[0]:.1f}%<br>"
                 f"Total: %{{customdata[1]:,.2f}}"
                 "<extra></extra>"
             )
         )
     )
+
 
     # -----------------------------------------------------
     # Layout
     # -----------------------------------------------------
 
     fig.update_layout(
+
         barmode="stack",
 
-        yaxis=dict(
-            title="Percentage (%)",
-            range=[0, 100],
-            ticksuffix="%"
+        xaxis=dict(
+            title=value_title,
+            tickformat=",.2s"
         ),
 
-        xaxis=dict(
+        yaxis=dict(
             title=None
         ),
 
         legend=dict(
             orientation="h",
             yanchor="top",
-            y=-0.3,
+            y=-0.22,
             xanchor="center",
             x=0.5,
+
             entrywidth=180,
             entrywidthmode="pixels"
         ),
