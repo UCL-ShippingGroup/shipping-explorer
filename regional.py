@@ -536,6 +536,11 @@ st.plotly_chart(
     use_container_width=True
 )
 
+import streamlit as st
+import pandas as pd
+import numpy as np
+import plotly.graph_objects as go
+
 
 # =========================================================
 # METRIC CONTROL
@@ -595,8 +600,7 @@ swarm_df = df[
 ].copy()
 
 
-# Remove rows with missing regions, missing totals,
-# or zero totals
+# Remove rows with missing regions / invalid values
 swarm_df = swarm_df[
     swarm_df["region_wb"].notna()
     & swarm_df[total_col].notna()
@@ -623,7 +627,7 @@ swarm_df["Port %"] = (
 def create_region_swarm(data, inventory_name):
 
     # -----------------------------------------------------
-    # Filter to Arrivals or Departures
+    # Filter to arrivals or departures
     # -----------------------------------------------------
 
     panel_data = data[
@@ -632,10 +636,7 @@ def create_region_swarm(data, inventory_name):
 
 
     # -----------------------------------------------------
-    # Region order
-    #
-    # Currently ordered from lowest median Port %
-    # to highest median Port %
+    # Order regions by median Port %
     # -----------------------------------------------------
 
     region_order = (
@@ -649,19 +650,13 @@ def create_region_swarm(data, inventory_name):
 
 
     # -----------------------------------------------------
-    # Give each region a numeric x position
-    #
-    # e.g.
-    # Region A = 0
-    # Region B = 1
-    # Region C = 2
+    # Numeric x positions for regions
     # -----------------------------------------------------
 
     region_positions = {
         region: i
         for i, region in enumerate(region_order)
     }
-
 
     panel_data["x_base"] = (
         panel_data["region_wb"]
@@ -670,7 +665,7 @@ def create_region_swarm(data, inventory_name):
 
 
     # -----------------------------------------------------
-    # Add reproducible horizontal jitter
+    # Reproducible jitter
     # -----------------------------------------------------
 
     rng = np.random.default_rng(42)
@@ -709,29 +704,22 @@ def create_region_swarm(data, inventory_name):
 
 
         # -------------------------------------------------
-        # Calculate box statistics
+        # Box statistics
         # -------------------------------------------------
 
         mean_value = values.mean()
-
         median_value = values.median()
-
         q1_value = values.quantile(0.25)
-
         q3_value = values.quantile(0.75)
-
         min_value = values.min()
-
         max_value = values.max()
-
         n_countries = len(values)
-
 
         x_position = region_positions[region]
 
 
         # -------------------------------------------------
-        # Box plot
+        # Custom data for box hover
         # -------------------------------------------------
 
         box_customdata = np.column_stack([
@@ -746,6 +734,10 @@ def create_region_swarm(data, inventory_name):
         ])
 
 
+        # -------------------------------------------------
+        # Box plot
+        # -------------------------------------------------
+
         fig.add_trace(
             go.Box(
 
@@ -757,8 +749,7 @@ def create_region_swarm(data, inventory_name):
 
                 boxpoints=False,
 
-                # Don't use Plotly's automatic mean because
-                # we add our own mean marker below
+                # Mean is drawn manually below
                 boxmean=False,
 
                 line=dict(
@@ -797,40 +788,34 @@ def create_region_swarm(data, inventory_name):
 
 
         # -------------------------------------------------
-        # Mean marker
+        # Mean dotted line
+        # No separate hover
         # -------------------------------------------------
 
         fig.add_trace(
             go.Scatter(
+
                 x=[
                     x_position - 0.21,
                     x_position + 0.21
                 ],
+
                 y=[
                     mean_value,
                     mean_value
                 ],
-        
+
                 mode="lines",
-        
+
                 line=dict(
                     color="#404040",
                     width=2,
                     dash="dot"
                 ),
-        
+
                 showlegend=False,
-        
-                customdata=[
-                    [region, mean_value],
-                    [region, mean_value]
-                ],
-        
-                hovertemplate=(
-                    "<b>%{customdata[0]}</b><br>"
-                    "Mean: %{customdata[1]:.1f}%"
-                    "<extra></extra>"
-                )
+
+                hoverinfo="skip"
             )
         )
 
@@ -957,7 +942,6 @@ def create_region_swarm(data, inventory_name):
         height=550,
 
         xaxis=dict(
-
             title=None,
 
             tickmode="array",
@@ -1008,9 +992,7 @@ def create_region_swarm(data, inventory_name):
 # INTERNATIONAL ARRIVALS
 # =========================================================
 
-st.subheader(
-    "International arrivals"
-)
+st.subheader("International arrivals")
 
 fig_arrivals = create_region_swarm(
     swarm_df,
@@ -1027,9 +1009,7 @@ st.plotly_chart(
 # INTERNATIONAL DEPARTURES
 # =========================================================
 
-st.subheader(
-    "International departures"
-)
+st.subheader("International departures")
 
 fig_departures = create_region_swarm(
     swarm_df,
