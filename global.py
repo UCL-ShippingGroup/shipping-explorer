@@ -79,7 +79,10 @@ with c1:
 
     st.markdown(
         """
-        Blurb to come
+        The Global Overview is designed to give countries the opportunity to understand and bench mark their GHG Emissions/Energy Demands 
+        against other nations as well as Global averages. To the right, headline statitstics GHG Emissfor International Voyages are provided   / 
+        global averages and /
+        th
         """
     )
 
