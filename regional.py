@@ -810,7 +810,7 @@ def create_region_swarm(data, inventory_name):
 
                 showlegend=False,
 
-                hovermode="closest"
+                hoverinfo="skip"
             )
         )
 
