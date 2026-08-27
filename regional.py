@@ -19,6 +19,7 @@ st.markdown(
     Finally, in a similar fashion to the Global overview, Countries are grouped in swarm and box plots, this time by region and development status 
     to allow comparison across regions. 
     """
+)
 
 df_in = pd.read_csv("https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explorer/main/datasets/inventories_total.csv")
 df_reg = pd.read_csv("https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explorer/main/datasets/country_status_labels_v3.csv")
