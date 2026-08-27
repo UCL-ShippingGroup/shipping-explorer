@@ -31,21 +31,21 @@ st.write(
   This 'Shipping Explorer' tool from the UCL Shipping and Oceans Research Group has been built to provide \
   users with the functionality to easily summarise key trends in shipping activity associated with individual member states of the \
   IMO. Specifically, the platform offers data characterising the number of voyages, energy demand and GHG emissions \
-  associated with internationally arriving and internationally departing voyages from the country of interest. A country may be \
-  selected via the dropdown menu below, with data for that country made available via the following page.
+  associated with internationally arriving and internationally departing voyages from a given country. The specific country can be \
+  selected via the dropdown menu below, with data for that country made available via the 'Voyage Inventories' page.
 
-  In addition, there is a growing interest in the availability of data able to capture the decarbonisation potential associated with \
-  the development of on-shore power and port electrification. Port electrification is a growing and immediate priority within the
+  In addition, there is a growing interest in data able to capture the decarbonisation potential associated with \
+  onshore power and port electrification. Port electrification is a growing and immediate priority within the
   context of maritime decarbonization, where the switching of fossil-powered port activities to renewable electricity will cut GHG \
-  emissions, local air pollution and operating costs, as well as prepare ports for incoming zero-emission shipping fuels. The energy \
+  emissions, local air pollution and operating costs, as well as serve to prepare ports for incoming zero-emission shipping fuels. The energy \
   demands and GHG emissions associated with maritime activity taking place at sea versus at port is therefore offered to enable users \
-  with the means to understand the potential mitigation impact that port electrification may offer.
+  with the means to understand the potential mitigation impact that port electrification offers.
   """
 )
 
 st.write(
     """
-    The public dashboard is available via the following link:
+    The public dashboard is available via the UCL Shipping and Oceans Research Group website and via the following link:
     """
 )
 
