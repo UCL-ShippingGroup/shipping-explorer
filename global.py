@@ -118,7 +118,7 @@ with c1:
             #    well as the mean to median times in port associated with each vessel. The average time in port observed once weighted \
             #    by Gross Tonnage or Deadweight Tonnage is also provided.",
             "Energy Demand": "The sum of all energy demanded across the set of voyages. The calculation methodology for evaluation of \
-                Energy Demand associated with each voyage is presented in **Annex 1** of the Method Statement.",
+                Energy Demand associated with each voyage is presented in presented in (Faber et al, 2020).",
             "GHG Emissions": "The sum of all CO2-equivalent emissions generated across the set of voyages. The calculation methodology \
                 for evaluation of GHG emissions associated with each voyage is presented in **Annex 1** of the Method Statement."
         },
@@ -185,43 +185,7 @@ with c2:
         border=True
     )
 
-#  st.metric(
-#         "Total international voyages",
-#         f"{total_ghg:,.2f} t CO₂e",
-#         border=True
-#     )
 
-#     st.metric(
-#         "In port",
-#         f"{port_ghg:,.2f} t CO₂e",
-#         f"{port_ghg_pct:.2f}%",
-#         border=True
-#     )
-
-#     st.metric(
-#         "In voyage",
-#         f"{voyage_ghg:,.2f} t CO₂e",
-#         f"{voyage_ghg_pct:.2f}%",
-#         border=True
-#     )
-
-#     st.metric(
-#         "Average per voyage",
-#         f"{avg_ghg:,.2f} t CO₂e",
-#         border=True
-#     )
-
-#     st.metric(
-#         "Average in port",
-#         f"{avg_port_ghg:,.2f} t CO₂e",
-#         border=True
-#     )
-
-#     st.metric(
-#         "Average in voyage",
-#         f"{avg_voyage_ghg:,.2f} t CO₂e",
-#         border=True
-#     )
 # # ============================================================
 # RIGHT — ENERGY DEMAND
 # ============================================================
@@ -267,43 +231,6 @@ with c3:
         f"{avg_voyage_energy:,.2f} TJ",
         border=True
     )
-# st.metric(
-#         "Total international voyages",
-#         f"{total_energy:,.0f} TJ",
-#         border=True
-#     )
-
-#     st.metric(
-#         "In port",
-#         f"{port_energy:,.0f} TJ",
-#         f"{port_energy_pct:.2f}%",
-#         border=True
-#     )
-
-#     st.metric(
-#         "In voyage",
-#         f"{voyage_energy:,.0f} TJ",
-#         f"{voyage_energy_pct:.2f}%",
-#         border=True
-#     )
-
-#     st.metric(
-#         "Average per voyage",
-#         f"{avg_energy:,.2f} TJ",
-#         border=True
-#     )
-
-#     st.metric(
-#         "Average in port",
-#         f"{avg_port_energy:,.2f} TJ",
-#         border=True
-#     )
-
-#     st.metric(
-#         "Average in voyage",
-#         f"{avg_voyage_energy:,.2f} TJ",
-#         border=True
-#     )
 
 #arr = inventories[inventories['Inventory']== 'Int. Arr. Inventory']
 #dep = inventories[inventories['Inventory']== 'Int. Dep. Inventory']
