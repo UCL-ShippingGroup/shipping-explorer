@@ -7,6 +7,19 @@ st.set_page_config(layout='wide')
 st.title('Regional Overview')
 st.divider()
 
+st.markdown(
+    """
+    The Regional overview allows users to track GHG Emissions/Energy Demand by geographical region and development status. The first bar
+    allows users to see the absolute figures for International Arrivals and Departures broken down into 'In Port' and 'In Voyage' GHG Emissions/
+    Energy Demand with percentages provided in the hover. 
+
+    The second chart displays all the countries in the selected countries geographical region to allow direct comparison of the proportion of emissions
+    in port. 
+
+    Finally, in a similar fashion to the Global overview, Countries are grouped in swarm and box plots, this time by region and development status 
+    to allow comparison across regions. 
+    """
+
 df_in = pd.read_csv("https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explorer/main/datasets/inventories_total.csv")
 df_reg = pd.read_csv("https://raw.githubusercontent.com/UCL-ShippingGroup/shipping-explorer/main/datasets/country_status_labels_v3.csv")
 
