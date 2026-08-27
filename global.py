@@ -1006,7 +1006,13 @@ fig.update_layout(
         t=90,
         b=60
     ),
-
+    legend=dict(
+        orientation="h",
+        yanchor="top",
+        y=-0.15,
+        xanchor="center",
+        x=0.5
+    ),
     xaxis=dict(
         tickmode="array",
 
