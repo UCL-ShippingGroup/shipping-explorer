@@ -957,6 +957,41 @@ add_panel(
     3
 )
 
+# Legend for country dots
+
+fig.add_trace(
+    go.Scatter(
+        x=[None],
+        y=[None],
+        mode="markers",
+        name="Other countries",
+        marker=dict(
+            size=7,
+            color="blue",
+            opacity=0.65
+        ),
+        hoverinfo="skip"
+    )
+)
+
+fig.add_trace(
+    go.Scatter(
+        x=[None],
+        y=[None],
+        mode="markers",
+        name="Selected country",
+        marker=dict(
+            size=14,
+            color="yellow",
+            line=dict(
+                color="black",
+                width=1.5
+            )
+        ),
+        hoverinfo="skip"
+    )
+)
+
 fig.update_layout(
 
     height=600,
@@ -964,7 +999,7 @@ fig.update_layout(
     template="plotly_white",
 
     hovermode="closest",
-
+    hoverdistance=5,
     margin=dict(
         l=70,
         r=30,
