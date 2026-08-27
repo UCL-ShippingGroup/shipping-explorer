@@ -37,8 +37,8 @@ st.write(
   port electrification technologies. Port electrification is a growing and immediate priority within the
   context of maritime decarbonization, where the switching of fossil-powered port activities to renewable electricity via onshore power will cut GHG \
   emissions, local air pollution and operating costs, as well as serve to prepare ports for incoming zero-emission shipping fuels. Energy \
-  demand and GHG emission statistics associated with maritime activity taking place 'at sea' versus 'in port' are therefore provided via the Global and Regional\
-  Overview pages to provide additional context on the aggregate mitigation potential that port electrification can offer.
+  demand and GHG emission statistics associated with maritime activity taking place 'at sea' versus 'in port' are therefore provided via the 'Global Overview' and 'Regional\
+  Overview' pages to provide additional context on the aggregate mitigation potential that port electrification can offer.
   """
 )
 
