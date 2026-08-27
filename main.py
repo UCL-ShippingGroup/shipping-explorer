@@ -88,7 +88,7 @@ reliance you place on the information provided on this site is strictly at your 
 losses or damages incurred from the use of this information.
 """
 )
-st.divider()
+#st.divider()
 
 
 
