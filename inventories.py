@@ -473,10 +473,6 @@ st.markdown("##### References")
 
 st.write(
 """
-DNV. (2024a). Report of the Comprehensive impact assessment of the basket of \
-    candidate GHG reduction mid-term measures – full report on Task 2 (Impacts \
-    on the fleet). MEPC 82-INF.8-Add.1.
-    
 Faber, J., Hanayama, S., Zhang, S., Pereda, P., Comer, B., Hauerhof, E., van der \
 Loeff, W.S., Smith, T., Zhang, Y., Kosaka, H. and Adachi, M., 2020. Fourth imo ghg study. London, UK.
 """
