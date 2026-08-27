@@ -130,13 +130,13 @@ with c1:
 # MIDDLE — GHG EMISSIONS
 # ============================================================
 
-# st.markdown("""
-# <style>
-# div[data-testid="stMetricValue"] {
-#     font-size: 1.5rem;
-# }
-# </style>
-# """, unsafe_allow_html=True)
+st.markdown("""
+<style>
+div[data-testid="stMetricValue"] {
+    font-size: 1.5rem;
+}
+</style>
+""", unsafe_allow_html=True)
 
 def format_metric(value, decimals=2):
     if abs(value) >= 1_000_000:
