@@ -21,9 +21,8 @@ st.title("Voyage Inventories")
 st.write(
     """
     One of the key intentions of the dashboard is to summarise shipping activity associated with alternative countries. \
-    For the purposes of the dashboard, we will use identification and analysis of voyages as the primary mechanism through \
-    which to explore trends in maritime activity associated with each country. Specifically, we will consider collections, \
-    or ‘inventories’, of records describing the internationally arriving voyages and international departing voyages associated with each country.\
+    The tool uses identification and analysis of voyages as the primary mechanism through which to explore trends in maritime activity associated with each country. Specifically, collections, \
+    or ‘inventories’, of records describing the internationally arriving voyages and international departing voyages associated with each country are considered.\
     """
 )
 
