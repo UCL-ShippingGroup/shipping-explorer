@@ -130,6 +130,14 @@ with c1:
 # MIDDLE — GHG EMISSIONS
 # ============================================================
 
+st.markdown("""
+<style>
+div[data-testid="stMetricValue"] {
+    font-size: 1.5rem;
+}
+</style>
+""", unsafe_allow_html=True)
+
 with c2:
 
     st.markdown("### GHG emissions")
