@@ -11,10 +11,7 @@ def download_as_csv(file, label, filename):
             label=label,
             file_name=filename)
 
-st.sidebar.markdown(
-    "International Voyage-based Maritime Activity Inventories Disaggregated by Port and Vessel Type, Sourced from the \
-    4th IMO GHG Study (Faber et al, 2020)."
-)
+st.sidebar.markdown("International 'Voyage-based Maritime Activity Inventories', featuring disaggregation by vessel type, partner economy and port.")
 
 
 ##### INTERNATIONAL VOYAGE-BASED ACTIVITY INVENTORIES ######
