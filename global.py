@@ -68,7 +68,7 @@ voyage_energy_pct = voyage_energy / total_energy * 100
 # THREE COLUMN LAYOUT
 # ============================================================
 
-c1, c2, c3 = st.columns([2.3, 1.1, 0.9])
+c1, c2, c3 = st.columns([2.3, 1, 1])
 
 
 # ============================================================
@@ -130,13 +130,18 @@ with c1:
 # MIDDLE — GHG EMISSIONS
 # ============================================================
 
-st.markdown("""
-<style>
-div[data-testid="stMetricValue"] {
-    font-size: 1.5rem;
-}
-</style>
-""", unsafe_allow_html=True)
+# st.markdown("""
+# <style>
+# div[data-testid="stMetricValue"] {
+#     font-size: 1.5rem;
+# }
+# </style>
+# """, unsafe_allow_html=True)
+
+def format_metric(value, decimals=2):
+    if abs(value) >= 1_000_000:
+        return f"{value / 1_000_000:,.{decimals}f}m"
+    return f"{value:,.{decimals}f}"
 
 with c2:
 
@@ -144,20 +149,20 @@ with c2:
 
     st.metric(
         "Total international voyages",
-        f"{total_ghg:,.0f} t CO₂e",
+        f"{format_metric(total_ghg)} t CO₂e",
         border=True
     )
 
     st.metric(
         "In port",
-        f"{port_ghg:,.0f} t CO₂e",
+        f"{format_metric(port_ghg)} t CO₂e",
         f"{port_ghg_pct:.2f}%",
         border=True
     )
 
     st.metric(
         "In voyage",
-        f"{voyage_ghg:,.0f} t CO₂e",
+        f"{format_metric(voyage_ghg)} t CO₂e",
         f"{voyage_ghg_pct:.2f}%",
         border=True
     )
@@ -180,8 +185,44 @@ with c2:
         border=True
     )
 
+#  st.metric(
+#         "Total international voyages",
+#         f"{total_ghg:,.2f} t CO₂e",
+#         border=True
+#     )
 
-# ============================================================
+#     st.metric(
+#         "In port",
+#         f"{port_ghg:,.2f} t CO₂e",
+#         f"{port_ghg_pct:.2f}%",
+#         border=True
+#     )
+
+#     st.metric(
+#         "In voyage",
+#         f"{voyage_ghg:,.2f} t CO₂e",
+#         f"{voyage_ghg_pct:.2f}%",
+#         border=True
+#     )
+
+#     st.metric(
+#         "Average per voyage",
+#         f"{avg_ghg:,.2f} t CO₂e",
+#         border=True
+#     )
+
+#     st.metric(
+#         "Average in port",
+#         f"{avg_port_ghg:,.2f} t CO₂e",
+#         border=True
+#     )
+
+#     st.metric(
+#         "Average in voyage",
+#         f"{avg_voyage_ghg:,.2f} t CO₂e",
+#         border=True
+#     )
+# # ============================================================
 # RIGHT — ENERGY DEMAND
 # ============================================================
 
@@ -191,20 +232,20 @@ with c3:
 
     st.metric(
         "Total international voyages",
-        f"{total_energy:,.0f} TJ",
+        f"{format_metric(total_energy)} TJ",
         border=True
     )
 
     st.metric(
         "In port",
-        f"{port_energy:,.0f} TJ",
+        f"{format_metric(port_energy)} TJ",
         f"{port_energy_pct:.2f}%",
         border=True
     )
 
     st.metric(
         "In voyage",
-        f"{voyage_energy:,.0f} TJ",
+        f"{format_metric(voyage_energy)} TJ",
         f"{voyage_energy_pct:.2f}%",
         border=True
     )
@@ -226,6 +267,43 @@ with c3:
         f"{avg_voyage_energy:,.2f} TJ",
         border=True
     )
+# st.metric(
+#         "Total international voyages",
+#         f"{total_energy:,.0f} TJ",
+#         border=True
+#     )
+
+#     st.metric(
+#         "In port",
+#         f"{port_energy:,.0f} TJ",
+#         f"{port_energy_pct:.2f}%",
+#         border=True
+#     )
+
+#     st.metric(
+#         "In voyage",
+#         f"{voyage_energy:,.0f} TJ",
+#         f"{voyage_energy_pct:.2f}%",
+#         border=True
+#     )
+
+#     st.metric(
+#         "Average per voyage",
+#         f"{avg_energy:,.2f} TJ",
+#         border=True
+#     )
+
+#     st.metric(
+#         "Average in port",
+#         f"{avg_port_energy:,.2f} TJ",
+#         border=True
+#     )
+
+#     st.metric(
+#         "Average in voyage",
+#         f"{avg_voyage_energy:,.2f} TJ",
+#         border=True
+#     )
 
 #arr = inventories[inventories['Inventory']== 'Int. Arr. Inventory']
 #dep = inventories[inventories['Inventory']== 'Int. Dep. Inventory']
