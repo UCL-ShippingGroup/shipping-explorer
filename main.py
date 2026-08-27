@@ -35,11 +35,11 @@ st.write(
   selected via the dropdown menu below, with data for that country made available via the 'Voyage Inventories' page.
 
   In addition, there is a growing interest in data able to capture the decarbonisation potential associated with \
-  onshore power and port electrification. Port electrification is a growing and immediate priority within the
-  context of maritime decarbonization, where the switching of fossil-powered port activities to renewable electricity will cut GHG \
-  emissions, local air pollution and operating costs, as well as serve to prepare ports for incoming zero-emission shipping fuels. The energy \
-  demands and GHG emissions associated with maritime activity taking place at sea versus at port is therefore offered to enable users \
-  with the means to understand the potential mitigation impact that port electrification offers.
+  port electrification technologies. Port electrification is a growing and immediate priority within the
+  context of maritime decarbonization, where the switching of fossil-powered port activities to renewable electricity via onshore power will cut GHG \
+  emissions, local air pollution and operating costs, as well as serve to prepare ports for incoming zero-emission shipping fuels. Energy \
+  demand and GHG emission statistics associated with maritime activity taking place 'at sea' versus 'in port' is therefore provided via the Global and Regional\
+  Overview pages to provide additional context on the aggregate mitigation potential that port electrification can offer.
   """
 )
 
