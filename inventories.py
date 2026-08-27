@@ -32,7 +32,7 @@ st.write(
 
 st.write(
     """
-    Voyage data is taken from the 4th IMO GHG Study. The study utilises AIS to understand the activity \
+    Voyage data is taken from the 4th IMO GHG Study for the year 2018. The study utilises AIS to understand the activity \
     profiles of individual vessels, then introduces vessel specification datasets that enable the energy demands, fuel \
     consumption and GHG emissions of vessel activity to be estimated. A full summary of the methodology used to estimate \
     GHG emissions from AIS data is presented in (Faber et al, 2020). The final dataset captures 1.2 million voyages undertaken by over 43,000 unique vessels across a single year, offering IMO delegations\
@@ -65,9 +65,9 @@ st.table(
         #    well as the mean to median times in port associated with each vessel. The average time in port observed once weighted \
         #    by Gross Tonnage or Deadweight Tonnage is also provided.",
         "Energy Demand": "The sum of all energy demanded across the set of voyages. The calculation methodology for evaluation of \
-            Energy Demand associated with each voyage is presented in **Annex 1** of the Method Statement.",
+            Energy Demand associated with each voyage is presented in (Faber et al, 2020).",
         "GHG Emissions": "The sum of all CO2-equivalent emissions generated across the set of voyages. The calculation methodology \
-            for evaluation of GHG emissions associated with each voyage is presented in **Annex 1** of the Method Statement."
+            for evaluation of GHG emissions associated with each voyage is presented in (Faber et al, 2020)."
     },
     border="horizontal",
     width="stretch",
