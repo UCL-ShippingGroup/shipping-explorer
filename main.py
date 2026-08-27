@@ -30,7 +30,7 @@ st.write(
     
   This 'Shipping Explorer' tool from the UCL Shipping and Oceans Research Group has been built to provide \
   users with the functionality to easily summarise key trends in shipping activity associated with individual member states of the \
-  IMO. Specifically, the platform offers data characterising the number of voyages, energy demand and GHG emissions \ 
+  IMO. Specifically, the platform offers data characterising the number of voyages, energy demand and GHG emissions \
   associated with internationally arriving and internationally departing voyages from the country of interest. A country may be \
   selected via the dropdown menu below, with data for that country made available via the following page.
 
