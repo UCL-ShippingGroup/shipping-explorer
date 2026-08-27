@@ -6,7 +6,9 @@ import streamlit as st
 st.subheader("Contact", divider = 'grey')
 
 st.write(
-"""
+""
+If you'd like provide feedback, comments and suggestions for improvements please contact:
+
 UCL Shipping and Oceans Research Group
 
 UCL Energy Institute
