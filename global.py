@@ -97,34 +97,34 @@ with c1:
         The following metrics are deployed to summarise the maritime activity associated with each country:
         """
     )
-  st.table(
-    {
-        "Number of Voyages": "The total number of voyages in the inventory.",
-        #"Fleet Size": "The total number of unique IMO numbers in the set of voyages.",
-        #"Transport Supply": "The sum of total transport work conducted by vessels across all voyages within the set. Transport \
-        #    Work is provided in two separate forms, one calculation that represents the product of Gross Tonnage and distance \
-        #    and another that represents the product of Deadweight Tonnage and distance.",
-        #"Average Build Year": "The average build year of vessels conducting voyages in the set. A range of averages are \
-        #    provided, including the average observed across all voyages, the average across all vessels, as well as the average \
-        #    build year when weighted by Gross Tonnage and Deadweight Tonnage.",
-        #"Average Voyage Distance": "The average distance associated with voyages in each inventory set. A number of alternative \
-        #    metrics are provided, including the median distance travelled, the mean of median voyages completed by each vessel, \
-        #    the average voyage distance weighted by Gross Tonnage and that weighted by Deadweight Tonnage.",
-        #"Average Voyage Time": "The average time taken for each voyage in the inventory set is also provided in terms of the \
-        #    overall median observed in the set of voyages, the mean of median voyage times completed by each vessel, as well as \
-        #    the average voyage time observed once weighted by Gross Tonnage or Deadweight Tonnage.",
-        #"Average Time in Port": "The average time in port observed for voyages in the inventory set is also provided on the \
-        #    platform. The average time in port is provided in terms of the overall mean value observed in the set of voyages, as \
-        #    well as the mean to median times in port associated with each vessel. The average time in port observed once weighted \
-        #    by Gross Tonnage or Deadweight Tonnage is also provided.",
-        "Energy Demand": "The sum of all energy demanded across the set of voyages. The calculation methodology for evaluation of \
-            Energy Demand associated with each voyage is presented in **Annex 1** of the Method Statement.",
-        "GHG Emissions": "The sum of all CO2-equivalent emissions generated across the set of voyages. The calculation methodology \
-            for evaluation of GHG emissions associated with each voyage is presented in **Annex 1** of the Method Statement."
-    },
-    border="horizontal",
-    width="stretch",
-)
+    st.table(
+        {
+            "Number of Voyages": "The total number of voyages in the inventory.",
+            #"Fleet Size": "The total number of unique IMO numbers in the set of voyages.",
+            #"Transport Supply": "The sum of total transport work conducted by vessels across all voyages within the set. Transport \
+            #    Work is provided in two separate forms, one calculation that represents the product of Gross Tonnage and distance \
+            #    and another that represents the product of Deadweight Tonnage and distance.",
+            #"Average Build Year": "The average build year of vessels conducting voyages in the set. A range of averages are \
+            #    provided, including the average observed across all voyages, the average across all vessels, as well as the average \
+            #    build year when weighted by Gross Tonnage and Deadweight Tonnage.",
+            #"Average Voyage Distance": "The average distance associated with voyages in each inventory set. A number of alternative \
+            #    metrics are provided, including the median distance travelled, the mean of median voyages completed by each vessel, \
+            #    the average voyage distance weighted by Gross Tonnage and that weighted by Deadweight Tonnage.",
+            #"Average Voyage Time": "The average time taken for each voyage in the inventory set is also provided in terms of the \
+            #    overall median observed in the set of voyages, the mean of median voyage times completed by each vessel, as well as \
+            #    the average voyage time observed once weighted by Gross Tonnage or Deadweight Tonnage.",
+            #"Average Time in Port": "The average time in port observed for voyages in the inventory set is also provided on the \
+            #    platform. The average time in port is provided in terms of the overall mean value observed in the set of voyages, as \
+            #    well as the mean to median times in port associated with each vessel. The average time in port observed once weighted \
+            #    by Gross Tonnage or Deadweight Tonnage is also provided.",
+            "Energy Demand": "The sum of all energy demanded across the set of voyages. The calculation methodology for evaluation of \
+                Energy Demand associated with each voyage is presented in **Annex 1** of the Method Statement.",
+            "GHG Emissions": "The sum of all CO2-equivalent emissions generated across the set of voyages. The calculation methodology \
+                for evaluation of GHG emissions associated with each voyage is presented in **Annex 1** of the Method Statement."
+        },
+        border="horizontal",
+        width="stretch",
+    )
 
 # ============================================================
 # MIDDLE — GHG EMISSIONS
