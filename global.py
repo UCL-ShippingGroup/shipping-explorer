@@ -168,19 +168,19 @@ with c2:
     )
 
     st.metric(
-        "Average per voyage",
+        "Per voyage",
         f"{avg_ghg:,.2f} t CO₂e",
         border=True
     )
 
     st.metric(
-        "Average in port",
+        "Per Voyage in port",
         f"{avg_port_ghg:,.2f} t CO₂e",
         border=True
     )
 
     st.metric(
-        "Average in voyage",
+        "Per Voyage in voyage",
         f"{avg_voyage_ghg:,.2f} t CO₂e",
         border=True
     )
@@ -215,19 +215,19 @@ with c3:
     )
 
     st.metric(
-        "Average per voyage",
+        "Per voyage",
         f"{avg_energy:,.2f} TJ",
         border=True
     )
 
     st.metric(
-        "Average in port",
+        "Per Voyage in port",
         f"{avg_port_energy:,.2f} TJ",
         border=True
     )
 
     st.metric(
-        "Average in voyage",
+        "Per Voyage in voyage",
         f"{avg_voyage_energy:,.2f} TJ",
         border=True
     )
@@ -259,7 +259,7 @@ chart_choice3 = st.segmented_control(
   # Fourth segmented control
 chart_choice4 = st.segmented_control(
     label="Select statistical view",
-    options=["Absolute", "Average per voyage"],
+    options=["Absolute", "Per Voyage"],
     default="Absolute"
 )
 
