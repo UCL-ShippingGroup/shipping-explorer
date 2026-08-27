@@ -59,7 +59,7 @@ st.subheader("Country selection", divider = 'grey')
 
 # Country Selector
 country_choice = st.selectbox(
-    "For which country would you like statistics on international shipping?",
+    "For which country would you like statistics on international shipping activity and emissions? Ensure a country is selected before moving on to the following pages.",
     country_iso_codes.iso_country.unique(),
     index=2)
 
