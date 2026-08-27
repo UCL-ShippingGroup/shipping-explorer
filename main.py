@@ -30,15 +30,14 @@ st.write(
     
   This 'Shipping Explorer' tool from the UCL Shipping and Oceans Research Group has been built to provide \
   users with the functionality to easily summarise key trends in shipping activity associated with individual member states of the \
-  IMO. Specifically, the platform offers data characterising the number of voyages, energy demand and GHG emissions \
-  associated with internationally arriving and internationally departing voyages from a given country. The specific country can be \
-  selected via the dropdown menu below, with data for that country made available via the 'Voyage Inventories' page.
+  IMO. The dropdown menu below can be used to select for a specific country, with data characterising the number of voyages, energy demands and GHG emissions \
+  associated with internationally arriving and internationally departing voyages for the country presented on the 'Voyage Inventories' page.
 
   In addition, there is a growing interest in data able to capture the decarbonisation potential associated with \
   port electrification technologies. Port electrification is a growing and immediate priority within the
   context of maritime decarbonization, where the switching of fossil-powered port activities to renewable electricity via onshore power will cut GHG \
   emissions, local air pollution and operating costs, as well as serve to prepare ports for incoming zero-emission shipping fuels. Energy \
-  demand and GHG emission statistics associated with maritime activity taking place 'at sea' versus 'in port' is therefore provided via the Global and Regional\
+  demand and GHG emission statistics associated with maritime activity taking place 'at sea' versus 'in port' are therefore provided via the Global and Regional\
   Overview pages to provide additional context on the aggregate mitigation potential that port electrification can offer.
   """
 )
@@ -60,7 +59,7 @@ st.subheader("Country selection", divider = 'grey')
 
 # Country Selector
 country_choice = st.selectbox(
-    "For which country would you like to statistics related to international shipping and maritime trade?",
+    "For which country would you like statistics on international shipping?",
     country_iso_codes.iso_country.unique(),
     index=2)
 
@@ -93,12 +92,12 @@ st.divider()
 
 
 
-st.markdown("##### References")
+#st.markdown("##### References")
 
-st.write(
-"""
-IPCC (2006). 2006 IPCC Guidelines for National Greenhouse Gas Inventories. \
-    Volume 2 (Energy), Chapter 3 on Mobile combustion – Section 5 on Water-borne \
-    Navigation. Intergovernmental Panel on Climate Change.
-"""
+#st.write(
+#"""
+#IPCC (2006). 2006 IPCC Guidelines for National Greenhouse Gas Inventories. \
+#    Volume 2 (Energy), Chapter 3 on Mobile combustion – Section 5 on Water-borne \
+#    Navigation. Intergovernmental Panel on Climate Change.
+#"""
 )
