@@ -34,6 +34,20 @@ df = df_in.merge(
 # Remove the duplicate ISO-3 column from df_reg
 df = df.drop(columns="iso_3")
 
+df["region_wb"] = df["region_wb"].replace({
+    "eap":"East Asia Pacific",
+    "euca":"Europe",
+    "lac":"Latin America/Caribbean",
+    "mena":"Middle East/North Africa",
+    "na":"North America",
+    "ssa":"Sub Saharan Africa",
+    "sa": "South Asia"})
+
+df["status"] = df["status"].replace({
+    "developing_minus":"Developing",
+    "developed_plus":"Developed",
+    "sids_ldcs":"SIDS/LDCS"})
+
 # ---------------------------------------------------------
 # Indicator control
 # ---------------------------------------------------------
