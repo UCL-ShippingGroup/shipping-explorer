@@ -20,7 +20,7 @@ country_iso_codes.loc[country_iso_codes.iso_country == "Congo, Democratic Republ
 
 
 # Homepage Description
-st.title("The Shipping Emissions Explorer Dashboard")
+st.title("The Shipping Emissions Explorer")
 st.write(
   """
   The International Maritime Organisation (IMO) is currently deliberating over the adoption of a Net-Zero Framework to \
